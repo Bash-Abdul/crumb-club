@@ -988,3 +988,418 @@
     font-size: 35px;
   }
 }
+/* Recipes tried, notes passed back to the book. */
+.kitchen-summary {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 17px;
+  width: fit-content;
+  min-height: 44px;
+}
+.kitchen-summary > span > strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--cocoa);
+}
+.kitchen-summary small {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.kitchen-summary-avatars {
+  display: flex;
+  padding-left: 5px;
+}
+.kitchen-summary-avatars > .kitchen-mini-avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 8px;
+  margin-left: -5px;
+  border: 2px solid #fffbf5;
+  background: #e7dbc8;
+}
+.kitchen-summary-avatars > .kitchen-mini-avatar:nth-child(2) {
+  background: #e3e5d2;
+}
+.kitchen-summary-avatars > .kitchen-mini-avatar:nth-child(3) {
+  background: #f1cfbe;
+}
+.recipe-kitchens {
+  padding: 33px 0 30px;
+  border-block: 1px solid var(--line);
+  margin: 32px 0;
+  scroll-margin-top: 24px;
+}
+.kitchen-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.kitchen-section-heading h2 {
+  font: 500 30px/1.2 var(--serif);
+  letter-spacing: -0.8px;
+  margin-top: 8px;
+}
+.kitchen-section-heading > div > p:last-child {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 10px;
+}
+.kitchen-try-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11px 16px;
+  background: var(--espresso);
+  color: var(--cream);
+  border: 1px solid var(--espresso);
+  border-radius: 4px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.kitchen-try-button:hover {
+  background: var(--cocoa);
+}
+.kitchen-status {
+  font-size: 12px;
+  color: var(--cocoa);
+  padding: 15px 0 0;
+}
+.kitchen-status:empty {
+  display: none;
+}
+.kitchen-entries {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+  margin-top: 25px;
+}
+.kitchen-entry {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: var(--cream);
+  padding: 18px;
+  border-radius: 3px;
+}
+.kitchen-entry-own {
+  border-color: #d9ba8c;
+}
+.kitchen-entry > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.kitchen-entry-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.kitchen-entry-author > .avatar {
+  width: 31px;
+  height: 31px;
+  flex-shrink: 0;
+}
+.kitchen-entry-author strong {
+  display: block;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.kitchen-entry-author > span:last-child > span {
+  display: block;
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.kitchen-entry time {
+  font-size: 9px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.kitchen-entry-note {
+  font-size: 12px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-top: 16px;
+}
+.kitchen-entry-photo {
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+  object-fit: contain;
+  background: #f3e8da;
+  margin-top: 17px;
+  border-radius: 2px;
+}
+.kitchen-entry > footer {
+  border-top: 1px solid var(--line);
+  padding-top: 9px;
+  margin-top: 14px;
+}
+.kitchen-remove-button,
+.kitchen-remove-confirm button {
+  min-height: 36px;
+  border: 0;
+  background: none;
+  padding: 5px 0;
+  font-size: 10px;
+  color: var(--cocoa);
+}
+.kitchen-remove-confirm p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.kitchen-remove-confirm > div {
+  display: flex;
+  gap: 20px;
+}
+.kitchen-editor {
+  background: #f7efdf;
+  border: 1px solid #dfc9a7;
+  padding: 22px;
+  margin-top: 24px;
+  border-radius: 4px;
+}
+.kitchen-editor-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.kitchen-editor-heading h3 {
+  font: 500 25px/1.2 var(--serif);
+  letter-spacing: -0.5px;
+}
+.kitchen-icon-button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--cocoa);
+  border: 0;
+  background: transparent;
+  flex-shrink: 0;
+}
+.kitchen-editor > p:first-of-type {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 6px 0 20px;
+}
+.kitchen-editor > label {
+  display: block;
+  font-size: 11px;
+  margin-bottom: 9px;
+}
+.kitchen-editor textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  min-height: 110px;
+  padding: 13px 15px;
+  border: 1px solid #ddc9b5;
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 1.8;
+  background: #fffbf5;
+  color: var(--espresso);
+}
+.kitchen-editor textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+.kitchen-note-count {
+  display: block;
+  text-align: right;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+.kitchen-upload {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 15px;
+  margin-top: 12px;
+}
+.kitchen-upload > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  min-height: 44px;
+  padding: 9px 13px;
+  border: 1px dashed #c5a986;
+  border-radius: 3px;
+  color: var(--cocoa);
+  font-size: 11px;
+  cursor: pointer;
+}
+.kitchen-upload input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.kitchen-upload > label:focus-within {
+  outline: 2px solid var(--cocoa);
+  outline-offset: 3px;
+}
+.kitchen-upload small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.kitchen-editor > footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 21px;
+  padding-top: 17px;
+  border-top: 1px solid #e0cdb5;
+}
+.kitchen-editor > footer > span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.kitchen-editor > footer > div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.kitchen-editor .button {
+  gap: 9px;
+  min-height: 44px;
+  font-size: 11px;
+  padding: 11px 16px;
+}
+.kitchen-cancel {
+  min-height: 44px;
+  border: 0;
+  background: none;
+  font-size: 11px;
+  color: var(--cocoa);
+}
+.kitchen-error {
+  font-size: 12px;
+  color: #943e29;
+  line-height: 1.7;
+  margin-top: 12px;
+}
+.kitchen-photo-preview {
+  margin: 15px 0;
+  max-width: 260px;
+}
+.kitchen-photo-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: contain;
+  background: var(--cream);
+  border: 1px solid var(--line);
+}
+.kitchen-photo-preview button {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--cocoa);
+  border: 0;
+  background: none;
+  padding: 8px 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .kitchen-editor {
+    animation: crumb-arrive 280ms ease-out;
+  }
+  .kitchen-try-button {
+    transition:
+      background-color 180ms ease,
+      transform 180ms ease;
+  }
+  .kitchen-try-button:active {
+    transform: scale(0.97);
+  }
+}
+@media (max-width: 760px) {
+  .kitchen-section-heading {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 17px;
+  }
+  .kitchen-section-heading h2 {
+    font-size: 28px;
+  }
+  .kitchen-section-heading > div > p:last-child {
+    font-size: 11px;
+  }
+  .kitchen-entries {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .kitchen-entry {
+    padding: 16px;
+  }
+  .kitchen-editor {
+    padding: 16px;
+  }
+  .kitchen-editor-heading h3 {
+    font-size: 23px;
+  }
+  .kitchen-editor > p:first-of-type {
+    font-size: 11px;
+  }
+  .kitchen-editor > footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .kitchen-editor > footer > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.kitchen-mini-avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.kitchen-mini-avatar > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.kitchen-entry > footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 18px;
+}
+.kitchen-entry > footer > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  border: 0;
+  background: transparent;
+  font-size: 10px;
+  padding: 5px 0;
+  color: var(--cocoa);
+}

@@ -21,3 +21,13 @@ The book uses the existing three recipes from two bakers. Chapters and contribut
 Browse `/recipes`, open a recipe and use the page arrows. Compare desktop with a narrow mobile screen. The branch keeps the marketing landing page separate from this experiment.
 
 Browser checks cover 320, 390, 768, 1024 and 1440 pixels; chapters, ingredient search, empty states, bookmark persistence, ingredient checklists, recipe navigation, contribution entry and the legacy collection address.
+
+## Trying a recipe
+
+Recipe pages now include a kitchen count beside the title and a “From other kitchens” section above ordinary comments. “I tried this” accepts an optional note (up to 800 characters) and optional JPG, PNG or WebP photograph (up to 8 MB). Photographs retain their proportions and are resized to a maximum 1200-pixel edge for browser storage.
+
+Each baker contributes one entry per recipe. Updating a note or replacing a photo does not increase the count. The current baker can edit or remove their entry, with confirmation before removal. A recipe can also be marked as tried without adding a note or photo. Comments remain independent questions and conversations.
+
+Sample attempts are in `src/data/kitchen-tries.ts`. The current baker’s attempts persist under `crumb-club:kitchen-tries:v1`; they use the existing local profile identity. These entries are local to this browser, with no server publishing or cross-device synchronization. Unavailable/full storage falls back to the current visit with a visible notice. Invalid stored entries are ignored.
+
+Verification covers distinct kitchen counts, updates, storage validation, photo validation, upload processing, reload persistence, cancellation/removal, comments, recipe isolation, responsive forms and reduced motion.

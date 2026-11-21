@@ -6,6 +6,7 @@ import "./motion.css";
 import "./recipe-book.css";
 import { DemoProvider } from "@/features/demo/demo-provider";
 import { BakersProvider } from "@/features/profiles/bakers-provider";
+import { KitchenProvider } from "@/features/recipe-book/kitchen-provider";
 import { ActivityProvider } from "@/features/community/activity-provider";
 export const metadata: Metadata = {
   title: "Crumb Club — For the love of all things baked",
@@ -20,7 +21,9 @@ export default function RootLayout({
       <body>
         <DemoProvider>
           <BakersProvider>
-            <ActivityProvider>{children}</ActivityProvider>
+            <ActivityProvider>
+              <KitchenProvider>{children}</KitchenProvider>
+            </ActivityProvider>
           </BakersProvider>
         </DemoProvider>
       </body>

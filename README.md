@@ -24,7 +24,7 @@ Webpack is selected because Turbopack's CSS worker cannot bind its internal port
 
 ## Current milestone
 
-The [shared recipe book experiment](docs/recipe-book.md) gives `/recipes` a contents view and cookbook-style recipe pages. It lives on `design/community-recipe-book`.
+The [shared recipe book experiment](docs/recipe-book.md) gives `/recipes` a contents view and cookbook-style recipe pages. Recipe pages also support local “I tried this” entries with notes, photos and distinct kitchen counts. It lives on `design/community-recipe-book`.
 
 The latest [profiles and following milestone](docs/profiles-following.md) extends the existing profile layout with public baker pages, locally persisted follows, consistent counts and profile editing. Following and Popular bakers use the same relationship state.
 

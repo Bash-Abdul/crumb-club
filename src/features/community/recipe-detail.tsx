@@ -14,6 +14,10 @@ import { recipes, recipeTarget } from "@/data/content";
 import { PostActions } from "./post-actions";
 import { RecipeBody } from "./recipe-body";
 import { ImageGallery } from "./image-gallery";
+import {
+  KitchenSummary,
+  RecipeKitchens,
+} from "@/features/recipe-book/recipe-kitchens";
 import { Comments } from "./comments";
 
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
@@ -98,6 +102,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
                 </span>
               )}
             </div>
+            <KitchenSummary recipeId={recipe.id} />
             <a className="book-jump" href="#recipe">
               Apron on. Let’s begin. <ArrowDown size={15} />
             </a>
@@ -136,6 +141,7 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
             />
           </div>
         ) : null}
+        <RecipeKitchens key={recipe.id} recipeId={recipe.id} />
         <div className="book-table-talk">
           <p className="book-edition">AROUND THE KITCHEN TABLE</p>
           <Comments id={recipe.id} initial={recipe.comments} />
