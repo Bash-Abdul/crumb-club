@@ -9,11 +9,13 @@ import {
 } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { CommunityTaste } from "@/components/community-taste";
+import { ClubMarquee } from "@/components/club-marquee";
+import { LandingEntrance } from "@/components/landing-entrance";
 import { LandingMotion } from "@/components/landing-motion";
 
 export default function Landing() {
   return (
-    <>
+    <LandingEntrance>
       <LandingMotion />
       <a className="skip" href="#main">
         Skip to content
@@ -87,17 +89,7 @@ export default function Landing() {
             </span>
           </div>
         </section>
-        <div className="ribbon" aria-hidden="true">
-          <span>Made with love</span>
-          <Wheat />
-          <span>Best shared</span>
-          <Wheat />
-          <span>A little flour, a little joy</span>
-          <Wheat />
-          <span>Everyone’s welcome</span>
-          <Wheat />
-          <span>Made with love</span>
-        </div>
+        <ClubMarquee />
         <section id="about" className="intro wrap" data-reveal>
           <div>
             <p className="eyebrow">PULL UP A CHAIR</p>
@@ -249,6 +241,6 @@ export default function Landing() {
           <span>© {new Date().getFullYear()} Crumb Club</span>
         </div>
       </footer>
-    </>
+    </LandingEntrance>
   );
 }

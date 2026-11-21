@@ -368,3 +368,14 @@
     height: 28px;
   }
 }
+@media (max-width: 360px) {
+  .hero h1 em {
+    display: block;
+    margin-left: 0;
+  }
+  .hero-spark {
+    bottom: 5px;
+    right: 28px;
+    margin: 0;
+  }
+}
