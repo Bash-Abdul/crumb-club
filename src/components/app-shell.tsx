@@ -33,9 +33,10 @@ function CollectionLinks() {
       ].map(({ filter, label, Icon }) => (
         <Link
           key={filter}
-          href={`/app?feed=${filter}`}
+          href={filter === "recipes" ? "/recipes" : `/app?feed=${filter}`}
           aria-current={
-            pathname === "/app" && params.get("feed") === filter
+            (filter === "recipes" && pathname.startsWith("/recipes")) ||
+            (pathname === "/app" && params.get("feed") === filter)
               ? "page"
               : undefined
           }
@@ -53,9 +54,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const name = currentBaker.name;
   const current = (href: string) =>
     pathname === href ||
+    (href === "/recipes" && pathname.startsWith("/recipes/")) ||
     (href === "/profile" && pathname.startsWith("/profile/")) ||
-    (href === "/app" &&
-      (pathname.startsWith("/posts/") || pathname.startsWith("/recipes/")));
+    (href === "/app" && pathname.startsWith("/posts/"));
   return (
     <div className="app-shell">
       <a className="skip" href="#community-main">
@@ -115,7 +116,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <nav className="app-mobile-nav" aria-label="Mobile community navigation">
-        {links.map(({ href, label, Icon }) => (
+        {[
+          ...links.slice(0, 3),
+          { href: "/recipes", label: "Recipes", Icon: BookOpen },
+          links[3],
+        ].map(({ href, label, Icon }) => (
           <Link
             key={href}
             href={href}

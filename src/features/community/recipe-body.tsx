@@ -7,8 +7,7 @@ export function RecipeBody({ recipe }: { recipe: Recipe }) {
   return (
     <section id="recipe" className="recipe-detail">
       <p className="eyebrow">
-        <BookOpen size={15} /> FROM {recipe.author.name.toUpperCase()}’S RECIPE
-        BOOK
+        <BookOpen size={15} /> THE RECIPE
       </p>
       <div className="recipe-stats">
         {recipe.prep && (
@@ -24,34 +23,40 @@ export function RecipeBody({ recipe }: { recipe: Recipe }) {
           </span>
         )}
       </div>
-      <h2>What you’ll need</h2>
-      <p className="recipe-help">Tap an ingredient as you go.</p>
-      <ul className="ingredient-list">
-        {recipe.ingredients.map((ingredient) => (
-          <li key={ingredient}>
-            <label>
-              <input
-                type="checkbox"
-                checked={checked.includes(ingredient)}
-                onChange={() =>
-                  setChecked((current) =>
-                    current.includes(ingredient)
-                      ? current.filter((item) => item !== ingredient)
-                      : [...current, ingredient],
-                  )
-                }
-              />
-              <span>{ingredient}</span>
-            </label>
-          </li>
-        ))}
-      </ul>
-      <h2>Let’s make something lovely.</h2>
-      <ol className="recipe-steps">
-        {recipe.steps.map((step) => (
-          <li key={step}>{step}</li>
-        ))}
-      </ol>
+      <div className="book-method-columns">
+        <div className="book-ingredients">
+          <h2>What you’ll need</h2>
+          <p className="recipe-help">Tap an ingredient as you go.</p>
+          <ul className="ingredient-list">
+            {recipe.ingredients.map((ingredient) => (
+              <li key={ingredient}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={checked.includes(ingredient)}
+                    onChange={() =>
+                      setChecked((current) =>
+                        current.includes(ingredient)
+                          ? current.filter((item) => item !== ingredient)
+                          : [...current, ingredient],
+                      )
+                    }
+                  />
+                  <span>{ingredient}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="book-method">
+          <h2>Let’s make it.</h2>
+          <ol className="recipe-steps">
+            {recipe.steps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </div>
+      </div>
       {recipe.note && <p className="recipe-help">{recipe.note}</p>}
     </section>
   );

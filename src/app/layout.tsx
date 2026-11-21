@@ -3,6 +3,7 @@ import "./globals.css";
 import "./application.css";
 import "./community-taste.css";
 import "./motion.css";
+import "./recipe-book.css";
 import { DemoProvider } from "@/features/demo/demo-provider";
 import { BakersProvider } from "@/features/profiles/bakers-provider";
 import { ActivityProvider } from "@/features/community/activity-provider";

@@ -15,6 +15,7 @@ import {
 import { useCommunity } from "./activity-provider";
 import { useDemo } from "@/features/demo/demo-provider";
 import { useBakers } from "@/features/profiles/bakers-provider";
+import { RecipeBook } from "@/features/recipe-book/recipe-book";
 import { HomeComposer } from "./home-composer";
 import { selectHomeFeed } from "./feed-selection";
 import { FeedPost, RecipeActivity } from "./feed-post";
@@ -81,6 +82,7 @@ export function HomeFeed() {
       scroll: false,
     });
   }
+  if (filter === "recipes") return <RecipeBook />;
   return (
     <>
       <h1 className="mobile-home-title">Your community feed</h1>
