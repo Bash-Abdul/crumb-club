@@ -1,0 +1,155 @@
+/* Motion stays short, local, and optional. Content remains visible without JS. */
+@keyframes crumb-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes crumb-settle {
+  from {
+    opacity: 0;
+    transform: translateY(22px) rotate(2deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+@keyframes crumb-reaction {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.24) rotate(-8deg);
+  }
+  75% {
+    transform: scale(0.94);
+  }
+}
+@keyframes crumb-spark {
+  from {
+    opacity: 0;
+    transform: rotate(-35deg) scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(12deg) scale(1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy > * {
+    animation: crumb-arrive 700ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+  .hero-copy > :nth-child(2) {
+    animation-delay: 80ms;
+  }
+  .hero-copy > :nth-child(3) {
+    animation-delay: 160ms;
+  }
+  .hero-copy > :nth-child(4) {
+    animation-delay: 240ms;
+  }
+  .hero-copy > :nth-child(5) {
+    animation-delay: 320ms;
+  }
+  .hero-art {
+    animation: crumb-settle 950ms cubic-bezier(0.2, 0.65, 0.3, 1) 100ms both;
+  }
+  .hero-spark {
+    animation: crumb-spark 900ms cubic-bezier(0.2, 0.65, 0.3, 1) 500ms both;
+  }
+  [data-motion="waiting"] {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  [data-motion="visible"] {
+    animation: crumb-arrive 650ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+  .world-item:nth-child(2),
+  .taste-find {
+    animation-delay: 80ms;
+  }
+  .world-item:nth-child(3),
+  .taste-chat {
+    animation-delay: 140ms;
+  }
+  .taste-recipe {
+    animation-delay: 100ms;
+  }
+  .app-main {
+    animation: crumb-arrive 420ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+  .feed-list > :nth-child(-n + 3) {
+    animation: crumb-arrive 450ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  }
+  .feed-list > :nth-child(2) {
+    animation-delay: 60ms;
+  }
+  .feed-list > :nth-child(3) {
+    animation-delay: 120ms;
+  }
+  .feed-actions .is-selected svg {
+    animation: crumb-reaction 360ms ease-out;
+  }
+  .button,
+  .feed-actions > *,
+  .app-desktop-nav a,
+  .app-mobile-nav a,
+  .collection-nav a,
+  .feed-tabs button,
+  .taste-post,
+  .text-link {
+    transition:
+      transform 200ms ease,
+      background-color 200ms ease,
+      color 200ms ease,
+      box-shadow 250ms ease;
+  }
+  .taste-photo img,
+  .world-photo img,
+  .hero-image img {
+    transition: transform 650ms cubic-bezier(0.2, 0.65, 0.3, 1);
+  }
+  .button:active,
+  .feed-actions > button:active {
+    transform: scale(0.96);
+  }
+  .feed-tabs button:active {
+    transform: scale(0.97);
+  }
+  .app-mobile-nav a:active svg {
+    transform: translateY(-3px);
+  }
+  @media (hover: hover) {
+    .taste-post:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px #381f140c;
+    }
+    .taste-photo:hover img,
+    .world-item:hover .world-photo img,
+    .hero-image:hover img {
+      transform: scale(1.035);
+    }
+    .feed-actions > button:hover svg {
+      transform: translateY(-2px);
+    }
+    .app-desktop-nav a:hover,
+    .collection-nav a:hover {
+      transform: translateX(3px);
+    }
+    .text-link:hover {
+      transform: translateX(3px);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-motion="waiting"] {
+    opacity: 1;
+    transform: none;
+  }
+}
