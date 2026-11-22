@@ -1403,3 +1403,200 @@
   padding: 5px 0;
   color: var(--cocoa);
 }
+
+/* The recipe stays open while the community's kitchen notes sit alongside it. */
+.book-recipe-workspace {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.book-recipe-workspace > * {
+  min-width: 0;
+}
+.book-recipe-discussion {
+  background: #fffbf5;
+  border: 1px solid var(--line);
+  padding: 26px 32px;
+  margin-right: 6px;
+  border-radius: 3px;
+}
+.book-recipe-discussion .comments {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.book-kitchens-rail .recipe-kitchens {
+  margin: 0 6px 0 0;
+  padding: 26px 30px;
+  border: 1px solid #e5d2bb;
+  background: #fcf4e8;
+  border-radius: 10px;
+}
+@media (min-width: 1280px) {
+  .app-shell--recipe {
+    max-width: 1640px;
+  }
+  .app-shell--recipe .app-main,
+  .app-shell--recipe .book-recipe-page {
+    max-width: none;
+  }
+  .book-recipe-workspace {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
+    gap: 24px;
+  }
+  .book-recipe-workspace > .book-recipe-paper {
+    grid-column: 1;
+    grid-row: 1;
+    padding-inline: 26px;
+    margin-right: 0;
+  }
+  .book-recipe-workspace > .book-recipe-discussion {
+    grid-column: 1;
+    grid-row: 2;
+    margin-right: 0;
+  }
+  .book-kitchens-rail {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 24px;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    border: 1px solid #e5d2bb;
+    background: #fcf4e8;
+    border-radius: 12px;
+  }
+  .book-kitchens-rail .recipe-kitchens {
+    padding: 19px 17px;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+  .book-kitchens-rail .kitchen-section-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  .book-kitchens-rail .kitchen-section-heading h2 {
+    font-size: 25px;
+    letter-spacing: -0.8px;
+  }
+  .book-kitchens-rail .kitchen-section-heading .book-edition {
+    font-size: 8px;
+    letter-spacing: 1.2px;
+  }
+  .book-kitchens-rail .kitchen-section-heading > div > p:last-child {
+    font-size: 11px;
+    line-height: 1.75;
+  }
+  .book-kitchens-rail .kitchen-try-button {
+    width: 100%;
+  }
+  .book-kitchens-rail .kitchen-entries {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    margin-top: 18px;
+  }
+  .book-kitchens-rail .kitchen-entry {
+    padding: 13px;
+  }
+  .book-kitchens-rail .kitchen-entry-photo {
+    max-height: 210px;
+    margin-top: 14px;
+  }
+  .book-kitchens-rail .kitchen-entry-note {
+    font-size: 11px;
+    line-height: 1.8;
+    margin-top: 12px;
+  }
+  .book-kitchens-rail .kitchen-entry time {
+    font-size: 8px;
+  }
+  .book-kitchens-rail .kitchen-entry-author {
+    gap: 7px;
+  }
+  .book-kitchens-rail .kitchen-entry-author > .avatar {
+    width: 27px;
+    height: 27px;
+    font-size: 8px;
+  }
+  .book-kitchens-rail .kitchen-entry-author strong {
+    font-size: 10px;
+  }
+  .book-kitchens-rail .kitchen-entry-author > span:last-child > span {
+    font-size: 8px;
+  }
+  .book-kitchens-rail .kitchen-entry > footer {
+    gap: 2px 12px;
+  }
+  .book-kitchens-rail .kitchen-entry > footer > button {
+    font-size: 9px;
+    min-height: 36px;
+  }
+  .book-kitchens-rail .kitchen-editor {
+    padding: 14px;
+    margin-top: 18px;
+  }
+  .book-kitchens-rail .kitchen-editor-heading h3 {
+    font-size: 22px;
+  }
+  .book-kitchens-rail .kitchen-editor > p:first-of-type {
+    font-size: 11px;
+  }
+  .book-kitchens-rail .kitchen-editor > footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .book-kitchens-rail .kitchen-editor > footer > div {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .book-kitchens-rail .kitchen-editor .button {
+    padding-inline: 11px;
+  }
+  .book-kitchens-rail .kitchen-upload small {
+    font-size: 9px;
+  }
+  .book-kitchens-rail .kitchen-status {
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  .book-recipe-intro {
+    gap: 22px;
+  }
+  .book-method-columns {
+    gap: 28px;
+  }
+  .book-recipe-title h1 {
+    font-size: clamp(34px, 2.75vw, 46px);
+  }
+}
+@media (min-width: 1280px) and (max-width: 1399px) {
+  .book-recipe-workspace {
+    grid-template-columns: minmax(0, 1fr) 282px;
+    gap: 20px;
+  }
+  .book-recipe-workspace > .book-recipe-paper {
+    padding-inline: 22px;
+  }
+  .book-recipe-intro {
+    gap: 18px;
+  }
+  .book-method-columns {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 22px;
+  }
+}
+@media (max-width: 760px) {
+  .book-kitchens-rail .recipe-kitchens {
+    padding: 23px 18px;
+    margin-right: 6px;
+  }
+  .book-recipe-discussion {
+    padding: 22px 18px;
+  }
+}

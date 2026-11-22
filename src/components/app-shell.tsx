@@ -10,6 +10,7 @@ import {
   Bookmark,
   BookOpen,
   MapPin,
+  Croissant,
 } from "lucide-react";
 import { Brand } from "./brand";
 import { useBakers } from "@/features/profiles/bakers-provider";
@@ -58,7 +59,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     (href === "/profile" && pathname.startsWith("/profile/")) ||
     (href === "/app" && pathname.startsWith("/posts/"));
   return (
-    <div className="app-shell">
+    <div
+      className={`app-shell ${pathname.startsWith("/recipes/") ? "app-shell--recipe" : ""}`}
+    >
       <a className="skip" href="#community-main">
         Skip to content
       </a>
@@ -84,6 +87,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Suspense>
         </div>
         <div className="sidebar-bottom">
+          <div className="sidebar-community-note">
+            <span className="sidebar-croissant" aria-hidden="true">
+              <Croissant size={57} strokeWidth={1.25} />
+              <svg viewBox="0 0 28 28" className="sidebar-note-rays">
+                <path d="M7 17 3 13M12 9 11 3M20 12 25 7" />
+              </svg>
+            </span>
+            <p>A community for bakers, bakery lovers and the just curious.</p>
+          </div>
           <Link href="/" className="sidebar-about">
             A little about the club
           </Link>

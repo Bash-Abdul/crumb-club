@@ -11,6 +11,7 @@ The Recipes collection now opens `/recipes`, a single community recipe book. The
 - Bookmarks share the existing local activity state with Home, Explore and profiles.
 - Recipe pages use paper margins, contributor credits, prep/bake/yield details, ingredients alongside method, kitchen notes and page-to-page links.
 - Ingredient checklists, photographs, reactions and comments remain available.
+- The left sidebar includes a warm croissant note: “A community for bakers, bakery lovers and the just curious.”
 - Desktop Recipes links and the mobile bottom navigation open the book. Home’s “From the recipe book” heading links to its contents.
 - Add a recipe opens the existing `/create?type=recipe` editor. This remains a local draft flow; it does not publish a contribution into the book.
 
@@ -24,7 +25,7 @@ Browser checks cover 320, 390, 768, 1024 and 1440 pixels; chapters, ingredient s
 
 ## Trying a recipe
 
-Recipe pages now include a kitchen count beside the title and a “From other kitchens” section above ordinary comments. “I tried this” accepts an optional note (up to 800 characters) and optional JPG, PNG or WebP photograph (up to 8 MB). Photographs retain their proportions and are resized to a maximum 1200-pixel edge for browser storage.
+Recipe pages include a kitchen count beside the title and a “From other kitchens” panel. At 1280px and wider, the panel sits beside the recipe and stays within reach while reading; its entries and editor scroll within the panel when needed. Smaller layouts place it below the recipe and before ordinary comments. “I tried this” accepts an optional note (up to 800 characters) and optional JPG, PNG or WebP photograph (up to 8 MB). Photographs retain their proportions and are resized to a maximum 1200-pixel edge for browser storage.
 
 Each baker contributes one entry per recipe. Updating a note or replacing a photo does not increase the count. The current baker can edit or remove their entry, with confirmation before removal. A recipe can also be marked as tried without adding a note or photo. Comments remain independent questions and conversations.
 

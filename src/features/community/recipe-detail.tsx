@@ -54,105 +54,112 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
           )}
         </div>
       </nav>
-      <article className="book-recipe-paper">
-        <header className="book-recipe-intro">
-          <div className="book-recipe-title">
-            <p className="book-edition">
-              {recipe.category} <span>NO. {number}</span>
-            </p>
-            <h1>{recipe.title}</h1>
-            <Link
-              className="book-recipe-credit"
-              href={profileHref(recipe.author.id)}
-            >
-              <BakerAvatar id={recipe.author.id} />
-              <span>
-                Contributed by <strong>{recipe.author.name}</strong>
-              </span>
-            </Link>
-            <p className="book-recipe-description">
-              {recipe.description.split(". ").slice(0, 2).join(". ")}
-              {recipe.description.split(". ").length > 2 ? "." : ""}
-            </p>
-            <div className="book-quick-stats">
-              {recipe.prep && (
+      <div className="book-recipe-workspace">
+        <article className="book-recipe-paper">
+          <header className="book-recipe-intro">
+            <div className="book-recipe-title">
+              <p className="book-edition">
+                {recipe.category} <span>NO. {number}</span>
+              </p>
+              <h1>{recipe.title}</h1>
+              <Link
+                className="book-recipe-credit"
+                href={profileHref(recipe.author.id)}
+              >
+                <BakerAvatar id={recipe.author.id} />
                 <span>
-                  <Clock size={15} />
-                  <span>
-                    <small>PREP</small>
-                    {recipe.prep}
-                  </span>
+                  Contributed by <strong>{recipe.author.name}</strong>
                 </span>
-              )}
-              {recipe.bake && (
-                <span>
+              </Link>
+              <p className="book-recipe-description">
+                {recipe.description.split(". ").slice(0, 2).join(". ")}
+                {recipe.description.split(". ").length > 2 ? "." : ""}
+              </p>
+              <div className="book-quick-stats">
+                {recipe.prep && (
                   <span>
-                    <small>BAKE</small>
-                    {recipe.bake}
+                    <Clock size={15} />
+                    <span>
+                      <small>PREP</small>
+                      {recipe.prep}
+                    </span>
                   </span>
-                </span>
-              )}
-              {recipe.yield && (
-                <span>
-                  <Users size={15} />
+                )}
+                {recipe.bake && (
                   <span>
-                    <small>MAKES</small>
-                    {recipe.yield}
+                    <span>
+                      <small>BAKE</small>
+                      {recipe.bake}
+                    </span>
                   </span>
-                </span>
-              )}
+                )}
+                {recipe.yield && (
+                  <span>
+                    <Users size={15} />
+                    <span>
+                      <small>MAKES</small>
+                      {recipe.yield}
+                    </span>
+                  </span>
+                )}
+              </div>
+              <KitchenSummary recipeId={recipe.id} />
+              <a className="book-jump" href="#recipe">
+                Apron on. Let’s begin. <ArrowDown size={15} />
+              </a>
             </div>
-            <KitchenSummary recipeId={recipe.id} />
-            <a className="book-jump" href="#recipe">
-              Apron on. Let’s begin. <ArrowDown size={15} />
-            </a>
+            <div className="book-recipe-cover">
+              <img
+                src={recipe.cover.src}
+                alt={recipe.cover.alt}
+                width={recipe.cover.width}
+                height={recipe.cover.height}
+                fetchPriority="high"
+              />
+              <span className="book-page-marker">{number}</span>
+            </div>
+          </header>
+          <div className="book-recipe-reactions">
+            <span>One for the recipe book.</span>
+            <PostActions target={recipeTarget(recipe)} />
           </div>
-          <div className="book-recipe-cover">
-            <img
-              src={recipe.cover.src}
-              alt={recipe.cover.alt}
-              width={recipe.cover.width}
-              height={recipe.cover.height}
-              fetchPriority="high"
-            />
-            <span className="book-page-marker">{number}</span>
-          </div>
-        </header>
-        <div className="book-recipe-reactions">
-          <span>One for the recipe book.</span>
-          <PostActions target={recipeTarget(recipe)} />
-        </div>
-        <RecipeBody key={recipe.id} recipe={recipe} />
-        <aside className="book-kitchen-note">
-          <span className="book-edition">
-            A NOTE FROM {recipe.author.name.toUpperCase()}’S KITCHEN
-          </span>
-          <p>{recipe.description}</p>
-          <Link href={profileHref(recipe.author.id)}>
-            More from {recipe.author.name} <ArrowRight size={14} />
-          </Link>
+          <RecipeBody key={recipe.id} recipe={recipe} />
+          <aside className="book-kitchen-note">
+            <span className="book-edition">
+              A NOTE FROM {recipe.author.name.toUpperCase()}’S KITCHEN
+            </span>
+            <p>{recipe.description}</p>
+            <Link href={profileHref(recipe.author.id)}>
+              More from {recipe.author.name} <ArrowRight size={14} />
+            </Link>
+          </aside>
+          {recipe.additionalImages?.length ? (
+            <div className="book-extra-photos">
+              <h2>A peek at the process.</h2>
+              <ImageGallery
+                images={recipe.additionalImages}
+                label={`${recipe.title}: kitchen photos`}
+              />
+            </div>
+          ) : null}
+          <footer className="book-page-footer">
+            <span>
+              Crumb Club <span aria-hidden="true">·</span> The community edition
+            </span>
+            <span>{number}</span>
+          </footer>
+        </article>
+        <aside
+          className="book-kitchens-rail"
+          aria-label="Notes from bakers who tried this recipe"
+        >
+          <RecipeKitchens key={recipe.id} recipeId={recipe.id} />
         </aside>
-        {recipe.additionalImages?.length ? (
-          <div className="book-extra-photos">
-            <h2>A peek at the process.</h2>
-            <ImageGallery
-              images={recipe.additionalImages}
-              label={`${recipe.title}: kitchen photos`}
-            />
-          </div>
-        ) : null}
-        <RecipeKitchens key={recipe.id} recipeId={recipe.id} />
-        <div className="book-table-talk">
+        <div className="book-table-talk book-recipe-discussion">
           <p className="book-edition">AROUND THE KITCHEN TABLE</p>
           <Comments id={recipe.id} initial={recipe.comments} />
         </div>
-        <footer className="book-page-footer">
-          <span>
-            Crumb Club <span aria-hidden="true">·</span> The community edition
-          </span>
-          <span>{number}</span>
-        </footer>
-      </article>
+      </div>
       <Link
         className="book-next-page"
         href={next ? `/recipes/${next.id}` : "/recipes"}
