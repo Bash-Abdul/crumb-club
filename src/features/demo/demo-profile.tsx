@@ -9,7 +9,8 @@ import { bakers, CURRENT_BAKER_ID, getPublishedItems } from "@/data/bakers";
 import { getPost, resolveFeedItem } from "@/data/content";
 import { useBakers } from "@/features/profiles/bakers-provider";
 import { BakerAvatar } from "@/features/profiles/baker-avatar";
-import { FollowButton } from "@/features/profiles/follow-button";
+import { useBakerTries } from "@/features/recipe-book/kitchen-provider";
+import { ReplayTour } from "@/features/tour/replay-tour";
 import { ProfileMascot } from "@/features/mascots/profile-mascot";
 import { Mascot } from "@/features/mascots/mascot";
 import { ProfileEditor } from "@/features/profiles/profile-editor";
@@ -20,7 +21,7 @@ export function DemoProfile({
 }) {
   const { preferences } = useDemo();
   const { activity } = useCommunity();
-  const { currentBaker, ready, storageError, getCounts } = useBakers();
+  const { currentBaker, ready, storageError } = useBakers();
   const [editing, setEditing] = useState(false);
   const [message, setMessage] = useState("");
   const editButton = useRef<HTMLButtonElement>(null);
@@ -30,7 +31,13 @@ export function DemoProfile({
     : bakers.find((person) => person.id === bakerId);
   const saved = posts.filter((post) => activity[post.id]?.saved);
   const published = getPublishedItems(bakerId);
-  const counts = getCounts(bakerId);
+  const tries = useBakerTries(bakerId);
+  const recipesShared = published.filter(
+    (item) => item.kind === "recipe",
+  ).length;
+  const bakesShared = published.filter(
+    (item) => item.kind === "post" && getPost(item.postId)?.kind === "bake",
+  ).length;
   if (!ready)
     return (
       <p role="status" className="app-loading">
@@ -77,16 +84,16 @@ export function DemoProfile({
         {baker.bio && <p>{baker.bio}</p>}
         <dl className="profile-counts">
           <div>
-            <dt>Followers</dt>
-            <dd data-profile-followers>{counts.followers}</dd>
+            <dt>Recipes shared</dt>
+            <dd>{recipesShared}</dd>
           </div>
           <div>
-            <dt>Following</dt>
-            <dd data-profile-following>{counts.following}</dd>
+            <dt>Bakes shared</dt>
+            <dd>{bakesShared}</dd>
           </div>
           <div>
-            <dt>Published</dt>
-            <dd data-profile-published>{published.length}</dd>
+            <dt>Recipes tried</dt>
+            <dd>{tries.length}</dd>
           </div>
         </dl>
         <div className="profile-header-actions">
@@ -108,7 +115,12 @@ export function DemoProfile({
               </Link>
             </>
           ) : (
-            <FollowButton bakerId={baker.id} />
+            <Link
+              className="profile-interests-link"
+              href={`/explore?baker=${baker.id}&category=Recipes`}
+            >
+              Browse their recipes
+            </Link>
           )}
         </div>
       </header>
@@ -135,7 +147,12 @@ export function DemoProfile({
           now.
         </p>
       )}
-      {own && <ProfileMascot />}
+      {own && (
+        <>
+          <ProfileMascot />
+          <ReplayTour />
+        </>
+      )}
       {interests.length > 0 && (
         <section className="profile-interests">
           <h2>
@@ -265,8 +282,8 @@ export function DemoProfile({
       )}
       <p className="profile-scope">
         {own
-          ? "Your profile and follows are saved on this device. Public publishing, collections and a baking journal are still to come."
-          : "Sample community profile · follow changes stay in this browser."}
+          ? "Your profile and recipe attempts are saved on this device. Public publishing, collections and a baking journal are still to come."
+          : "Sample community profile · a little corner of the club."}
       </p>
     </div>
   );

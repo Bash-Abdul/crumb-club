@@ -1,48 +1,50 @@
 "use client";
 import Link from "next/link";
-import { ChefHat, BookOpen, UsersRound } from "lucide-react";
+import { useState } from "react";
+import {
+  ArrowRight,
+  BookOpen,
+  ChefHat,
+  Sparkles,
+  UsersRound,
+} from "lucide-react";
 import { recipes } from "@/data/content";
-import { popularBakers, profileHref } from "@/data/bakers";
-import { FollowButton } from "@/features/profiles/follow-button";
+import { clubBakers, profileHref } from "@/data/bakers";
 import { BakerAvatar } from "@/features/profiles/baker-avatar";
-export function BakingPrompt({ compact = false }: { compact?: boolean }) {
+export function DiscoverySidebar() {
+  const [member, setMember] = useState(0);
+  const members = [0, 1].map(
+    (offset) => clubBakers[(member + offset) % clubBakers.length],
+  );
   return (
-    <section
-      className={compact ? "baking-prompt mobile-prompt" : "baking-prompt"}
-      aria-label="This week’s baking prompt"
-    >
-      <div>
-        <p className="eyebrow">THIS WEEK’S BAKE</p>
-        <h2>
-          A little loaf.
-          <br /> A little <em>patience.</em>
-        </h2>
+    <aside className="club-home-sidebar" aria-label="Around the club">
+      <section className="club-featured-recipe">
         <p>
-          Flour, water, and a slow afternoon.
-          <br /> Let’s see what rises.
+          <Sparkles size={18} />
+          This week’s bake
         </p>
         <Link href="/create?type=bake">
+          <img
+            src="/images/bread.jpg"
+            alt="Flour-dusted golden loaves, fresh from the oven"
+            loading="lazy"
+          />
+          <h2>
+            A little loaf.
+            <br />
+            <em>A little patience.</em>
+          </h2>
+        </Link>
+        <p className="club-featured-description">
+          Flour, water, and a slow afternoon. Let’s see what rises.
+        </p>
+        <Link className="button small" href="/create?type=bake">
           Try the prompt <ChefHat size={15} />
         </Link>
-      </div>
-      <img
-        src="/images/bread.jpg"
-        alt="Golden crusty loaves of bread"
-        loading="lazy"
-      />
-    </section>
-  );
-}
-export function DiscoverySidebar() {
-  return (
-    <aside className="discovery-sidebar">
-      <BakingPrompt />
-      <section
-        className="discovery-section sidebar-recipes"
-        aria-labelledby="sidebar-recipe-heading"
-      >
-        <div className="discovery-section-title">
-          <h2 id="sidebar-recipe-heading">
+      </section>
+      <section className="club-sidebar-recipes">
+        <div className="club-sidebar-section-title">
+          <h2>
             <Link href="/recipes">From the recipe book</Link>
           </h2>
           <BookOpen size={17} />
@@ -67,56 +69,43 @@ export function DiscoverySidebar() {
               <Link
                 className="sidebar-recipe-author"
                 href={profileHref(recipe.author.id)}
-                aria-label={`View ${recipe.author.name}’s profile`}
               >
                 By {recipe.author.name}
               </Link>
             </li>
           ))}
         </ul>
+        <Link className="club-sidebar-link" href="/recipes">
+          Open the book <ArrowRight size={15} />
+        </Link>
       </section>
-      <section
-        className="discovery-section popular-bakers"
-        aria-labelledby="popular-bakers-heading"
-      >
-        <div className="discovery-section-title">
-          <h2 id="popular-bakers-heading">Popular bakers</h2>
-          <UsersRound size={18} />
+      <section className="club-meet-members">
+        <div>
+          <h2>
+            <UsersRound size={18} />
+            Meet the club
+          </h2>
+          <button
+            type="button"
+            onClick={() =>
+              setMember((current) => (current + 1) % clubBakers.length)
+            }
+            aria-label="Meet more bakers"
+          >
+            <ArrowRight size={17} />
+          </button>
         </div>
-        <ul className="popular-baker-list">
-          {popularBakers.map((baker) => (
-            <li key={baker.id}>
-              <div className="popular-baker-row">
-                <Link
-                  href={profileHref(baker.id)}
-                  aria-label={`View ${baker.name}’s profile`}
-                >
-                  <BakerAvatar
-                    id={baker.id}
-                    className={`avatar avatar-${baker.initials.toLowerCase()}`}
-                  />
-                  <span>
-                    <strong>{baker.name}</strong>
-                    <small>
-                      {baker.id === "sophie"
-                        ? "Cosy bakes & kitchen stories"
-                        : baker.id === "amelia"
-                          ? "Family recipes & generous sprinkles"
-                          : "Bakery finds & weekend wanderings"}
-                    </small>
-                  </span>
-                </Link>
-                <FollowButton bakerId={baker.id} compact />
-              </div>
-            </li>
-          ))}
-        </ul>
+        <p>A couple of familiar faces. Everyone brings something.</p>
+        {members.map((baker) => (
+          <Link key={baker.id} href={profileHref(baker.id)}>
+            <BakerAvatar id={baker.id} />
+            <span>
+              <strong>{baker.name}</strong>
+              <small>{baker.bio}</small>
+            </span>
+          </Link>
+        ))}
       </section>
-      <p className="community-footnote">
-        A cosy corner, made for sharing.
-        <br />
-        Sample stories · demo community
-      </p>
     </aside>
   );
 }

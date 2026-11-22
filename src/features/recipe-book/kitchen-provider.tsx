@@ -106,3 +106,15 @@ export function useKitchen(recipeId: string) {
     ),
   };
 }
+
+export function useBakerTries(bakerId: string) {
+  const context = useContext(Context);
+  const hydrated = useHydrated();
+  if (!context) throw new Error("KitchenProvider is required");
+  const local = hydrated ? context.local : {};
+  return recipeIds
+    .flatMap((recipeId) =>
+      recipeKitchenTries(recipeId, sampleKitchenTries, local, CURRENT_BAKER_ID),
+    )
+    .filter((entry) => entry.authorId === bakerId);
+}

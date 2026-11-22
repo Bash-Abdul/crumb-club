@@ -27,6 +27,7 @@ interface SocialPostBase {
   comments: Comment[];
 }
 export interface BakePost extends SocialPostBase {
+  title?: string;
   kind: "bake";
   images: [ContentImage, ...ContentImage[]];
   category?: BakingCategory;
@@ -34,6 +35,7 @@ export interface BakePost extends SocialPostBase {
   recipeId?: string;
 }
 export interface DiscoveryPost extends SocialPostBase {
+  title?: string;
   kind: "discovery";
   images?: ContentImage[];
   category?: BakingCategory;

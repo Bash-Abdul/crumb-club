@@ -1,19 +1,21 @@
 # Profiles and persistent following
 
+Historical milestone: following has since been removed. See [Community grid and tour](community-grid-and-tour.md) for current behavior.
+
 This milestone extends the existing Crumb Club profile rather than replacing it. The original profile intro, round avatar, typography, interest links, saved-content cards and empty-state styling remain. Public profiles use the same `DemoProfile` component as the current baker’s profile.
 
 ## Profile information and routes
 
 Profiles now include a display name, handle, avatar or initials, optional bio, and Followers, Following and Published counts. These are small additions inside the existing intro, without a cover image or a new dashboard layout.
 
-| Route | Baker |
-| --- | --- |
-| `/profile` | The current local demo baker. |
-| `/profile/sophiebakes` | Sophie M. |
-| `/profile/ameliabakes` | Amelia R. |
-| `/profile/jamesfinds` | James L. |
-| `/profile/noorscrumbs` | Noor K. |
-| `/profile/you` | Compatibility alias redirecting to the current profile. |
+| Route                  | Baker                                                   |
+| ---------------------- | ------------------------------------------------------- |
+| `/profile`             | The current local demo baker.                           |
+| `/profile/sophiebakes` | Sophie M.                                               |
+| `/profile/ameliabakes` | Amelia R.                                               |
+| `/profile/jamesfinds`  | James L.                                                |
+| `/profile/noorscrumbs` | Noor K.                                                 |
+| `/profile/you`         | Compatibility alias redirecting to the current profile. |
 
 Unknown handles show a missing-baker page. The current demo identity uses the stable ID and handle `you`. Other handles are fixed mock metadata. This is not an authentication or username-registration system.
 
@@ -69,10 +71,10 @@ Handles are displayed but not editable. Name changes do not change profile URLs 
 
 ## Persistence
 
-| Key | Contents |
-| --- | --- |
-| `crumb-club:following:v1` | Current baker’s normalised `followingIds`. |
-| `crumb-club:profile:v1` | Local display name, bio and optional avatar. |
+| Key                       | Contents                                     |
+| ------------------------- | -------------------------------------------- |
+| `crumb-club:following:v1` | Current baker’s normalised `followingIds`.   |
+| `crumb-club:profile:v1`   | Local display name, bio and optional avatar. |
 
 Stored data is validated before use. Loading guards prevent clicks before relationships restore. Blocked or full storage falls back to in-memory behaviour with a notice; changes then last only for the current visit.
 

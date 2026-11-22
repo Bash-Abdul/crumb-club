@@ -13,10 +13,9 @@ test("social posts and recipes have distinct, stable identities and valid refere
   assert.equal(new Set(ids).size, ids.length, "reaction IDs must not collide");
   for (const post of socialPosts) {
     if (post.kind === "bake") assert.ok(post.images.length >= 1);
-    assert.ok(
-      !Object.hasOwn(post, "title"),
-      "social posts do not require titles",
-    );
+    if (post.kind === "general") assert.ok(!Object.hasOwn(post, "title"));
+    else if (post.title !== undefined)
+      assert.equal(typeof post.title, "string");
     assert.ok(!Object.hasOwn(post, "ingredients"));
     assert.ok(!Object.hasOwn(post, "steps"));
     if (post.kind === "bake" && post.recipeId)

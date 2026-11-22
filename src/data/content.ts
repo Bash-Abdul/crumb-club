@@ -7,6 +7,7 @@ import type {
 export const socialPosts: Post[] = [
   {
     id: "sunday-buns",
+    title: "Sunday cinnamon buns",
     kind: "bake",
     author: {
       id: "sophie",
@@ -58,6 +59,7 @@ export const socialPosts: Post[] = [
   },
   {
     id: "little-bakery",
+    title: "A new Saturday ritual",
     kind: "discovery",
     author: {
       id: "james",
@@ -98,6 +100,7 @@ export const socialPosts: Post[] = [
   },
   {
     id: "first-loaf",
+    title: "My very first loaf",
     kind: "bake",
     author: {
       id: "noor",
@@ -183,6 +186,7 @@ export const socialPosts: Post[] = [
   },
   {
     id: "cookie-afternoon",
+    title: "Cookies for the neighbours",
     kind: "bake",
     author: {
       id: "amelia",
@@ -362,42 +366,12 @@ export const recipes: Recipe[] = [
   },
 ];
 export const feedItems: FeedItem[] = [
-  {
-    kind: "post",
-    postId: "sunday-buns",
-  },
-  {
-    kind: "post",
-    postId: "little-bakery",
-  },
-  {
-    kind: "post",
-    postId: "first-loaf",
-  },
-  {
-    kind: "post",
-    postId: "rainy-day",
-  },
-  {
-    kind: "post",
-    postId: "kitchen-sunshine",
-  },
-  {
-    kind: "post",
-    postId: "cookie-afternoon",
-  },
-  {
+  ...socialPosts.map((post): FeedItem => ({ kind: "post", postId: post.id })),
+  ...recipes.map((recipe): FeedItem => ({
     kind: "recipe",
-    recipeId: "lemon-cake",
-  },
-  {
-    kind: "recipe",
-    recipeId: "chocolate-chip-cookies",
-  },
+    recipeId: recipe.id,
+  })),
 ];
-
-// Fixed demo relationships; no follow-management UI or recommendation system.
-export const followedAuthorIds: readonly string[] = ["sophie", "amelia"];
 
 export function getPost(id: string) {
   return socialPosts.find((post) => post.id === id);

@@ -1,5 +1,4 @@
 import type { Author, FeedItem } from "@/features/community/types";
-import type { FollowRelationship } from "@/features/profiles/relationships";
 import { socialPosts, recipes, resolveFeedItem } from "./content";
 export const CURRENT_BAKER_ID = "you";
 export interface Baker extends Author {
@@ -21,20 +20,8 @@ export const bakers: Baker[] = Array.from(
     ]),
   ).values(),
 ).map((author) => ({ ...author, handle: handles[author.id] ?? author.id }));
-// Curated demo suggestions, without calculated popularity or follower counts.
-export const popularBakers = ["sophie", "amelia", "james"]
-  .map((id) => bakers.find((baker) => baker.id === id))
-  .filter((baker): baker is Baker => !!baker);
-export const mockRelationships: FollowRelationship[] = [
-  { followerId: "james", followingId: "sophie" },
-  { followerId: "noor", followingId: "sophie" },
-  { followerId: "sophie", followingId: "amelia" },
-  { followerId: "noor", followingId: "amelia" },
-  { followerId: "amelia", followingId: "james" },
-  { followerId: "sophie", followingId: "noor" },
-  { followerId: "james", followingId: CURRENT_BAKER_ID },
-  { followerId: "noor", followingId: CURRENT_BAKER_ID },
-];
+// A small introduction to the community, without popularity rankings.
+export const clubBakers = bakers;
 export function profileHref(id: string) {
   if (id === CURRENT_BAKER_ID) return "/profile";
   const baker = bakers.find((person) => person.id === id);

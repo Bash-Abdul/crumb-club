@@ -5,6 +5,11 @@ import "./community-taste.css";
 import "./motion.css";
 import "./recipe-book.css";
 import "./app-chrome.css";
+import "./community-grid.css";
+import "./mascot-tour.css";
+import "./community-grid.css";
+import "./mascot-tour.css";
+import { TourProvider } from "@/features/tour/tour-provider";
 import { MascotProvider } from "@/features/mascots/mascot-provider";
 import { DemoProvider } from "@/features/demo/demo-provider";
 import { BakersProvider } from "@/features/profiles/bakers-provider";
@@ -25,7 +30,9 @@ export default function RootLayout({
           <MascotProvider>
             <BakersProvider>
               <ActivityProvider>
-                <KitchenProvider>{children}</KitchenProvider>
+                <KitchenProvider>
+                  <TourProvider>{children}</TourProvider>
+                </KitchenProvider>
               </ActivityProvider>
             </BakersProvider>
           </MascotProvider>

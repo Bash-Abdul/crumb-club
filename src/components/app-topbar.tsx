@@ -32,6 +32,7 @@ function SearchControl({
   return (
     <form
       className="topbar-search"
+      data-tour="search"
       role="search"
       aria-label="Search the club"
       action="/explore"
@@ -61,6 +62,7 @@ function SearchFallback() {
   return (
     <form
       className="topbar-search"
+      data-tour="search"
       role="search"
       aria-label="Search the club"
       action="/explore"
@@ -131,6 +133,7 @@ export function AppTopbar() {
         <button
           type="button"
           className="topbar-icon-button topbar-search-toggle"
+          data-tour="search"
           aria-label={searchOpen ? "Close search" : "Open search"}
           aria-expanded={searchOpen}
           aria-controls="club-search"
@@ -187,6 +190,7 @@ export function AppTopbar() {
         </div>
         <Link
           className="topbar-profile"
+          data-tour="profile"
           href="/profile"
           aria-label={`Your profile, ${currentBaker.name}`}
         >

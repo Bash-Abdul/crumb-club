@@ -1,191 +1,206 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Fragment } from "react";
+import {
+  BookOpen,
+  Bookmark,
+  ChefHat,
+  MapPin,
+  MessageCircle,
+  Wheat,
+} from "lucide-react";
 import type { FeedItem } from "./types";
-import { Wheat } from "lucide-react";
 import {
   feedItems,
   socialPosts,
   recipes,
-  getPost,
-  getRecipe,
   resolveFeedItem,
 } from "@/data/content";
 import { useCommunity } from "./activity-provider";
-import { useDemo } from "@/features/demo/demo-provider";
 import { useBakers } from "@/features/profiles/bakers-provider";
-import { RecipeBook } from "@/features/recipe-book/recipe-book";
 import { Mascot } from "@/features/mascots/mascot";
 import { HomeComposer } from "./home-composer";
-import { selectHomeFeed } from "./feed-selection";
-import { FeedPost, RecipeActivity } from "./feed-post";
-import { BakingPrompt, DiscoverySidebar } from "./discovery-sidebar";
+import {
+  arrangeHomeGrid,
+  readHomeFilter,
+  selectHomeFeed,
+  type HomeFilter,
+} from "./feed-selection";
+import { GridCard } from "./grid-card";
+import { DiscoverySidebar } from "./discovery-sidebar";
 const filters = [
-  { value: "all", label: "For you" },
-  { value: "following", label: "Following" },
+  { value: "all", label: "All", Icon: ChefHat },
+  { value: "bakes", label: "Bakes", Icon: ChefHat },
+  { value: "recipes", label: "Recipes", Icon: BookOpen },
+  { value: "finds", label: "Little finds", Icon: MapPin },
+  { value: "conversations", label: "Conversations", Icon: MessageCircle },
 ] as const;
+const catalogue = feedItems;
+function key(item: FeedItem) {
+  return item.kind === "post"
+    ? `post:${item.postId}`
+    : `recipe:${item.recipeId}`;
+}
 export function HomeFeed() {
   const router = useRouter();
   const params = useSearchParams();
-  const rawFilter = params.get("feed") ?? "all";
-  const filter = ["all", "following", "saved", "recipes", "finds"].includes(
-    rawFilter,
-  )
-    ? rawFilter
-    : "all";
-  const isHome = filter === "all" || filter === "following";
-  const collectionTitle =
-    filter === "saved"
-      ? "Saved"
-      : filter === "recipes"
-        ? "Recipes"
-        : "Little finds";
-  const { activity, storageError, ready } = useCommunity();
-  const {
-    followingIds,
-    ready: followsReady,
-    storageError: followsStorageError,
-    currentBaker,
-    hasProfile,
-  } = useBakers();
-  const { preferences, storageError: preferenceStorageError } = useDemo();
-  const candidates: FeedItem[] =
-    filter === "saved"
-      ? [
-          ...socialPosts.map((post): FeedItem => ({
-            kind: "post",
-            postId: post.id,
-          })),
-          ...recipes.map((recipe): FeedItem => ({
-            kind: "recipe",
-            recipeId: recipe.id,
-          })),
-        ]
-      : feedItems;
+  const filter = readHomeFilter(params.get("feed"));
+  const { activity, ready, storageError } = useCommunity();
+  const { currentBaker, hasProfile } = useBakers();
   const visible = selectHomeFeed(
-    candidates,
+    catalogue,
     socialPosts,
     recipes,
-    filter === "following",
-    followingIds,
-  ).filter((item) => {
-    const resource = resolveFeedItem(item);
-    if (!resource) return false;
-    if (filter === "saved") return activity[resource.id]?.saved;
-    if (filter === "recipes") return item.kind === "recipe";
-    if (filter === "finds")
-      return item.kind === "post" && getPost(item.postId)?.kind === "discovery";
-    return true;
-  });
-  function setFilter(value: string) {
+    filter,
+  ).filter(
+    (item) => filter !== "saved" || activity[resolveFeedItem(item)!.id]?.saved,
+  );
+  const grid = arrangeHomeGrid(visible, socialPosts);
+  function setFilter(value: HomeFilter) {
     router.replace(value === "all" ? "/app" : `/app?feed=${value}`, {
       scroll: false,
     });
   }
-  if (filter === "recipes") return <RecipeBook />;
   return (
-    <>
-      <h1 className="mobile-home-title">
-        <span>Your community feed</span>
-        <Mascot className="mobile-feed-companion" />
-      </h1>
-      <header className="community-heading">
-        <div>
-          <h1>
-            {hasProfile
-              ? `Good to see you, ${currentBaker.name}.`
-              : "Good things, shared."}
-          </h1>
-          <p>What’s baking today?</p>
+    <div className="community-home">
+      <div className="home-welcome-row">
+        <header className="club-home-heading">
+          <div>
+            <h1 data-tour="home" tabIndex={-1}>
+              {hasProfile ? (
+                <>
+                  Good to see you, <span>{currentBaker.name}.</span>
+                </>
+              ) : (
+                "Good things, shared."
+              )}
+            </h1>
+            <p>Bakes, recipes, discoveries and more from the Crumb Club.</p>
+          </div>
+          <Mascot className="home-heading-mascot" />
+        </header>
+        <div className="home-bookmarks">
+          <Link href="/recipes" data-tour="recipe-book">
+            <BookOpen size={15} />
+            The recipe book
+          </Link>
+          <Link href="/app?feed=saved" data-tour="saved">
+            <Bookmark size={15} />
+            Saved favourites
+          </Link>
         </div>
-        <Link href="/join" className="demo-entry">
-          {preferences ? "Your interests" : "Make yourself at home"}
-        </Link>
-      </header>
-      {(storageError || preferenceStorageError || followsStorageError) && (
+      </div>
+      {storageError && (
         <p className="storage-notice" role="status">
           Your browser can’t save changes right now. Changes will last for this
           visit.
         </p>
       )}
-      <div className="home-columns">
-        <section className="feed-column" aria-label="Community feed">
-          {isHome ? (
-            <div
-              className="feed-tabs home-tabs"
-              role="group"
-              aria-label="Home feed"
+      {filter !== "saved" ? (
+        <div
+          className="club-home-filters"
+          role="group"
+          aria-label="Community content"
+          data-tour="filters"
+        >
+          {filters.map(({ value, label, Icon }) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={filter === value}
+              onClick={() => setFilter(value)}
             >
-              {filters.map((item) => (
-                <button
-                  key={item.value}
-                  aria-pressed={filter === item.value}
-                  onClick={() => setFilter(item.value)}
-                >
-                  {item.label}
-                </button>
-              ))}
+              <Icon size={19} strokeWidth={1.5} />
+              {label}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="club-saved-heading">
+          <h2>Saved favourites.</h2>
+          <button type="button" onClick={() => setFilter("all")}>
+            Back to the community
+          </button>
+        </div>
+      )}
+      <div className="community-home-columns">
+        <section
+          className="community-home-main"
+          aria-label={
+            filter === "saved" ? "Saved favourites" : "Community contributions"
+          }
+        >
+          {filter !== "saved" && (
+            <div data-tour="composer">
+              <HomeComposer />
+            </div>
+          )}
+          <p className="sr-only" role="status">
+            {filter === "saved" && !ready
+              ? "Finding your saved favourites…"
+              : `${visible.length} ${visible.length === 1 ? "contribution" : "contributions"}`}
+          </p>
+          {filter === "saved" && !ready ? (
+            <p className="feed-empty" role="status">
+              Finding your saved favourites…
+            </p>
+          ) : visible.length ? (
+            <div
+              className={`community-grid ${filter !== "all" ? "community-grid-filtered" : ""}`}
+            >
+              {filter === "all" && grid.feature && grid.find ? (
+                <>
+                  <div className="community-grid-feature">
+                    <GridCard item={grid.feature} />
+                  </div>
+                  <div className="community-grid-side">
+                    <GridCard item={grid.find} />
+                    {grid.conversation && <GridCard item={grid.conversation} />}
+                  </div>
+                  {grid.recipe && <GridCard item={grid.recipe} wide />}
+                  {grid.rest.map((item) => (
+                    <GridCard
+                      key={key(item)}
+                      item={item}
+                      wide={item.kind === "recipe"}
+                    />
+                  ))}
+                </>
+              ) : (
+                visible.map((item) => (
+                  <GridCard
+                    key={key(item)}
+                    item={item}
+                    wide={item.kind === "recipe"}
+                  />
+                ))
+              )}
             </div>
           ) : (
-            <header className="collection-heading">
-              <h2>{collectionTitle}</h2>
-              <Link href="/app">Back to Home</Link>
-            </header>
-          )}
-          {filter === "all" && <HomeComposer />}
-          <div className="feed-list">
-            {(filter === "saved" && !ready) ||
-            (filter === "following" && !followsReady) ? (
-              <p className="feed-empty" role="status">
-                {filter === "following"
-                  ? "Finding your bakers’ posts…"
-                  : "Finding your saved bakes…"}
+            <div className="feed-empty">
+              <Mascot />
+              <h2>
+                {filter === "saved"
+                  ? "Keep a little inspiration."
+                  : "A fresh page for good things."}
+              </h2>
+              <p>
+                {filter === "saved"
+                  ? "Save a post or recipe and it’ll be waiting here."
+                  : "Nothing in this corner yet. Share something with the club."}
               </p>
-            ) : visible.length ? (
-              visible.map((item, index) => {
-                const post =
-                  item.kind === "post" ? getPost(item.postId) : undefined;
-                const recipe =
-                  item.kind === "recipe" ? getRecipe(item.recipeId) : undefined;
-                return (
-                  <Fragment key={`${item.kind}-${post?.id ?? recipe?.id}`}>
-                    {post ? (
-                      <FeedPost post={post} />
-                    ) : recipe ? (
-                      <RecipeActivity recipe={recipe} />
-                    ) : null}
-                    {index === 2 && filter === "all" && (
-                      <BakingPrompt compact />
-                    )}
-                  </Fragment>
-                );
-              })
-            ) : (
-              <div className="feed-empty">
-                <Mascot />
-                <h2>
-                  {filter === "following"
-                    ? "A little quiet here."
-                    : "Keep a little inspiration."}
-                </h2>
-                <p>
-                  {filter === "following"
-                    ? "Posts from the bakers you follow will appear here. Explore For you to meet the community."
-                    : "Tap Save on a post or recipe and it’ll be waiting here for you."}
-                </p>
-                <button className="button" onClick={() => setFilter("all")}>
-                  Back to the good things
-                </button>
-              </div>
-            )}
-          </div>
+              <button className="button" onClick={() => setFilter("all")}>
+                Explore all the good things
+              </button>
+            </div>
+          )}
           <p className="feed-end">
-            <Wheat size={18} /> All caught up. Pop the kettle on.
+            <Wheat size={17} />
+            All caught up. Pop the kettle on.
           </p>
         </section>
         <DiscoverySidebar />
       </div>
-    </>
+    </div>
   );
 }
