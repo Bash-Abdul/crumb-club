@@ -1,3 +1,4 @@
+import "@/features/explore/explore-refinements.css";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { AppShell } from "@/components/app-shell";
