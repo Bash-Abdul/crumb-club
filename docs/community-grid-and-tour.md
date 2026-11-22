@@ -27,3 +27,9 @@ The tour follows visible targets across responsive layouts, scrolls them into vi
 This remains a local frontend prototype. Create saves drafts rather than publishing; notifications have no backend. Existing activity, mascot and recipe-attempt storage keys are preserved.
 
 Seventeen automated tests cover content identities, content filters, deduplication, legacy filters, recipe attempts and tour state/navigation. TypeScript and production compilation are checked. Temporary browser checks cover responsive grids from 320 to 1920 pixels, filters, saves/reactions, gallery navigation across resize, contribution counts, member cycling and the seven-step tour on desktop and phones. Tour checks include focus trapping, dismissal persistence, replay and reduced motion. Browser tooling is not a committed regression suite.
+
+## Profile visual update
+
+Profiles now use a wide kitchen photograph, an overlapping avatar and a combined contribution/companion strip. Interests link to discovery. Posts, Recipes and Tried switch between the baker’s own content; Saved is available only on the local owner’s profile. The owner’s right rail previews saved content and recent recipe attempts. Empty states reflect actual local data rather than invented activity.
+
+Profile editing and mascot selection retain their existing persistence. The profile options button provides the tour replay. The desktop layout becomes a single column on phones, with horizontally scrollable content navigation. Browser checks cover 320, 390, 768 and 1440 pixels, content navigation, profile editing, mascot selection and public-profile privacy.

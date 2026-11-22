@@ -1,3 +1,4 @@
+import { getBakeWeek } from "@/data/weekly-bakes";
 import Link from "next/link";
 import { profileHref } from "@/data/bakers";
 import { BakerAvatar } from "@/features/profiles/baker-avatar";
@@ -19,6 +20,11 @@ export function PostDetail({ post }: { post: Post }) {
       <Link className="back-link" href="/app">
         <ChevronLeft size={17} /> Back to the community
       </Link>
+      {post.kind === "bake" && post.weekId && getBakeWeek(post.weekId) && (
+        <Link className="weekly-entry-tag" href={`/weekly/${post.weekId}`}>
+          Part of {getBakeWeek(post.weekId)?.title}
+        </Link>
+      )}
       <div className="detail-heading">
         <p className="eyebrow">
           {post.kind === "bake"

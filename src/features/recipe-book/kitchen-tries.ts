@@ -1,6 +1,7 @@
 export const KITCHEN_NOTE_LIMIT = 800;
 export const KITCHEN_PHOTO_LIMIT = 1500000;
 export interface KitchenNote {
+  weekIds?: string[];
   note: string;
   photo?: string;
   updatedAt: string;
@@ -41,6 +42,18 @@ export function readKitchenTries(
     result[recipeId] = {
       note: entry.note.trim(),
       updatedAt: entry.updatedAt,
+      ...(Array.isArray(entry.weekIds)
+        ? {
+            weekIds: [
+              ...new Set(
+                entry.weekIds.filter(
+                  (id): id is string =>
+                    typeof id === "string" && /^[a-z0-9-]{1,80}$/.test(id),
+                ),
+              ),
+            ].slice(0, 52),
+          }
+        : {}),
       ...(entry.photo ? { photo: entry.photo } : {}),
     };
   }

@@ -27,6 +27,7 @@ interface SocialPostBase {
   comments: Comment[];
 }
 export interface BakePost extends SocialPostBase {
+  weekId?: string;
   title?: string;
   kind: "bake";
   images: [ContentImage, ...ContentImage[]];

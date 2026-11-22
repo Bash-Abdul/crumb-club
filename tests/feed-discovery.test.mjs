@@ -34,7 +34,7 @@ test("All mixes all publishing types in chronological order", () => {
 });
 
 test("content filters separate bakes, recipes, finds and photo/text conversations", () => {
-  const expected = { bakes: 3, recipes: 3, finds: 1, conversations: 2 };
+  const expected = { bakes: 4, recipes: 3, finds: 1, conversations: 2 };
   for (const [filter, count] of Object.entries(expected)) {
     const visible = selectHomeFeed(feedItems, socialPosts, recipes, filter);
     assert.equal(visible.length, count);

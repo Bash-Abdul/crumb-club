@@ -1,3 +1,4 @@
+import { getBakeWeek } from "@/data/weekly-bakes";
 import Link from "next/link";
 import { BookOpen, ChefHat, MapPin, MessageCircle } from "lucide-react";
 import { profileHref } from "@/data/bakers";
@@ -98,6 +99,11 @@ export function GridCard({
           </div>
           {!hasPhoto && <MessageCircle size={18} strokeWidth={1.4} />}
         </div>
+        {post?.kind === "bake" && post.weekId && getBakeWeek(post.weekId) && (
+          <Link className="weekly-entry-tag" href={`/weekly/${post.weekId}`}>
+            Part of this week’s bake <ChefHat size={12} />
+          </Link>
+        )}
         {title && (
           <Link href={href}>
             <h2>{title}</h2>

@@ -2,7 +2,7 @@
 
 A responsive Next.js frontend prototype for the baking ecosystem: home bakers, bakery lovers and anyone curious about baked goods.
 
-The latest milestone introduces a community Home grid, content filters and a personal mascot walkthrough. See [Community grid and tour](docs/community-grid-and-tour.md) for implementation details and [Implementation status](docs/implementation.md) for historical scope.
+The latest milestone adds [weekly bakes](docs/weekly-bakes.md): open themes and featured recipes with linked kitchen contributions. It builds on the community Home grid, content filters and personal mascot walkthrough. See [Community grid and tour](docs/community-grid-and-tour.md) for implementation details and [Implementation status](docs/implementation.md) for historical scope.
 
 Home offers All, Bakes, Recipes, Little finds and Conversations. Following has been removed; profiles highlight contributions and recipes tried, while Meet the club introduces members without rankings. The shared recipe book, recipe attempts, reactions, comments and saved favourites remain available.
 
@@ -30,4 +30,4 @@ Unsplash photo IDs: `1509440159596-0249088772ff` (bread), `1509365465985-25d11c1
 
 Production build and strict TypeScript checks pass. Browser checks cover Home, Explore, Create, Profile, onboarding and post details at 320, 390, 768, 1024 and 1440 pixels, with screenshots reviewed and no horizontal overflow observed. The demo entry, interest ordering, original likes/saves/comments/recipes, search/category filters, photo preview, draft restoration, blocked-storage fallback and safe mobile action placement passed. No runtime page errors were observed.
 
-Seventeen content-model, feed-selection, recipe-attempt and tour tests are committed and run with `npm test` on Node 24. Browser tooling lives in a temporary directory; no browser-test dependency or maintained browser regression suite has been added to the project. See the implementation document for remaining scope and verification limits.
+Twenty content-model, feed-selection, recipe-attempt, weekly-bake and tour tests are committed and run with `npm test` on Node 24. Browser tooling lives in a temporary directory; no browser-test dependency or maintained browser regression suite has been added to the project. See the implementation document for remaining scope and verification limits.

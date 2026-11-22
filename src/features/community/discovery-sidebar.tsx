@@ -8,6 +8,7 @@ import {
   Sparkles,
   UsersRound,
 } from "lucide-react";
+import { activeBakeWeek } from "@/data/weekly-bakes";
 import { recipes } from "@/data/content";
 import { clubBakers, profileHref } from "@/data/bakers";
 import { BakerAvatar } from "@/features/profiles/baker-avatar";
@@ -23,23 +24,21 @@ export function DiscoverySidebar() {
           <Sparkles size={18} />
           This week’s bake
         </p>
-        <Link href="/create?type=bake">
+        <Link href={`/weekly/${activeBakeWeek.id}`}>
           <img
-            src="/images/bread.jpg"
-            alt="Flour-dusted golden loaves, fresh from the oven"
+            src={activeBakeWeek.image}
+            alt={activeBakeWeek.alt}
             loading="lazy"
           />
-          <h2>
-            A little loaf.
-            <br />
-            <em>A little patience.</em>
-          </h2>
+          <h2>{activeBakeWeek.title}</h2>
         </Link>
         <p className="club-featured-description">
-          Flour, water, and a slow afternoon. Let’s see what rises.
+          {activeBakeWeek.format === "theme"
+            ? "An open theme. Take it wherever your kitchen leads."
+            : "One recipe, passed around the club."}
         </p>
-        <Link className="button small" href="/create?type=bake">
-          Try the prompt <ChefHat size={15} />
+        <Link className="button small" href={`/weekly/${activeBakeWeek.id}`}>
+          Step into the week <ChefHat size={15} />
         </Link>
       </section>
       <section className="club-sidebar-recipes">

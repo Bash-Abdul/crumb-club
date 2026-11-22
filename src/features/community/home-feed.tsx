@@ -9,6 +9,7 @@ import {
   MessageCircle,
   Wheat,
 } from "lucide-react";
+import { activeBakeWeek } from "@/data/weekly-bakes";
 import type { FeedItem } from "./types";
 import {
   feedItems,
@@ -80,6 +81,12 @@ export function HomeFeed() {
           <Mascot className="home-heading-mascot" />
         </header>
         <div className="home-bookmarks">
+          <Link
+            className="weekly-home-link"
+            href={`/weekly/${activeBakeWeek.id}`}
+          >
+            <ChefHat size={15} /> This week’s bake
+          </Link>
           <Link href="/recipes" data-tour="recipe-book">
             <BookOpen size={15} />
             The recipe book

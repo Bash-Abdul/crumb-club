@@ -6,6 +6,33 @@ import type {
 } from "@/features/community/types";
 export const socialPosts: Post[] = [
   {
+    id: "apple-afternoon",
+    kind: "bake",
+    weekId: "apple-days",
+    title: "An apple afternoon",
+    author: {
+      id: "amelia",
+      name: "Amelia R.",
+      initials: "AR",
+      bio: "A little butter, a little patience.",
+    },
+    time: "Earlier this week",
+    publishedAt: "2026-11-19T15:00:00Z",
+    category: "Pastries",
+    images: [
+      {
+        src: "/images/apple-bake.jpg",
+        alt: "A slice of homemade apple pie with a golden crust",
+        width: 1400,
+        height: 2100,
+      },
+    ],
+    caption:
+      "Used up the apples that had been waiting in the fruit bowl. The pastry cracked a little and I forgot to set a timer, but warm with a spoonful of cream? Absolutely worth it. My take on this week’s apple theme.",
+    likes: 12,
+    comments: [],
+  },
+  {
     id: "sunday-buns",
     title: "Sunday cinnamon buns",
     kind: "bake",
