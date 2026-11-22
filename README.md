@@ -24,6 +24,8 @@ Webpack is selected because Turbopack's CSS worker cannot bind its internal port
 
 ## Current milestone
 
+The [account header and mascot update](docs/mascots-and-header.md) adds shared search, notification controls, an initials profile link and four personal mascot choices in onboarding.
+
 The [shared recipe book experiment](docs/recipe-book.md) gives `/recipes` a contents view and cookbook-style recipe pages. Recipe pages also support local “I tried this” entries with notes, photos and distinct kitchen counts. It lives on `design/community-recipe-book`.
 
 The latest [profiles and following milestone](docs/profiles-following.md) extends the existing profile layout with public baker pages, locally persisted follows, consistent counts and profile editing. Following and Popular bakers use the same relationship state.
@@ -49,6 +51,7 @@ Likes, saves and comments persist under `crumb-club:activity:v1`. Preferences us
 - `src/features/demo`: preferences, onboarding and local profile
 - `src/features/explore`: visual discovery and filtering
 - `src/features/create`: local draft editor and image preview
+- `src/features/mascots`: character artwork components and local mascot preferences
 - `public/images` and `public/fonts`: local assets
 
 ## Image sources

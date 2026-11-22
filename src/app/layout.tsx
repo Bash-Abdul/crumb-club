@@ -4,6 +4,8 @@ import "./application.css";
 import "./community-taste.css";
 import "./motion.css";
 import "./recipe-book.css";
+import "./app-chrome.css";
+import { MascotProvider } from "@/features/mascots/mascot-provider";
 import { DemoProvider } from "@/features/demo/demo-provider";
 import { BakersProvider } from "@/features/profiles/bakers-provider";
 import { KitchenProvider } from "@/features/recipe-book/kitchen-provider";
@@ -20,11 +22,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <DemoProvider>
-          <BakersProvider>
-            <ActivityProvider>
-              <KitchenProvider>{children}</KitchenProvider>
-            </ActivityProvider>
-          </BakersProvider>
+          <MascotProvider>
+            <BakersProvider>
+              <ActivityProvider>
+                <KitchenProvider>{children}</KitchenProvider>
+              </ActivityProvider>
+            </BakersProvider>
+          </MascotProvider>
         </DemoProvider>
       </body>
     </html>

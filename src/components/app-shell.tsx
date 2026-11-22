@@ -10,12 +10,10 @@ import {
   Bookmark,
   BookOpen,
   MapPin,
-  Croissant,
 } from "lucide-react";
 import { Brand } from "./brand";
-import { useBakers } from "@/features/profiles/bakers-provider";
-import { BakerAvatar } from "@/features/profiles/baker-avatar";
-import { CURRENT_BAKER_ID } from "@/data/bakers";
+import { AppTopbar } from "./app-topbar";
+import { Mascot } from "@/features/mascots/mascot";
 const links = [
   { href: "/app", label: "Home", Icon: Home },
   { href: "/explore", label: "Explore", Icon: Compass },
@@ -51,8 +49,6 @@ function CollectionLinks() {
 }
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { currentBaker, hasProfile } = useBakers();
-  const name = currentBaker.name;
   const current = (href: string) =>
     pathname === href ||
     (href === "/recipes" && pathname.startsWith("/recipes/")) ||
@@ -87,46 +83,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Suspense>
         </div>
         <div className="sidebar-bottom">
+          <Mascot className="sidebar-rail-companion" />
           <div className="sidebar-community-note">
-            <span className="sidebar-croissant" aria-hidden="true">
-              <Croissant size={57} strokeWidth={1.25} />
-              <svg viewBox="0 0 28 28" className="sidebar-note-rays">
-                <path d="M7 17 3 13M12 9 11 3M20 12 25 7" />
-              </svg>
-            </span>
+            <Mascot className="sidebar-companion" />
             <p>A community for bakers, bakery lovers and the just curious.</p>
           </div>
-          <Link href="/" className="sidebar-about">
-            A little about the club
-          </Link>
-          <Link
-            href={hasProfile ? "/profile" : "/join"}
-            className="sidebar-user"
-          >
-            <BakerAvatar id={CURRENT_BAKER_ID} />
-            <span>
-              <strong>{name}</strong>
-              <small>
-                {hasProfile ? "Your demo profile" : "Make yourself at home"}
-              </small>
-            </span>
-          </Link>
-          <p className="sidebar-demo">Demo community · saved on this device</p>
         </div>
       </aside>
-      <header className="app-mobile-header">
-        <Brand />
-        <Link
-          href={hasProfile ? "/profile" : "/join"}
-          className="mobile-avatar"
-          aria-label={hasProfile ? "Your demo profile" : "Enter demo mode"}
-        >
-          <BakerAvatar id={CURRENT_BAKER_ID} />
-        </Link>
-      </header>
-      <main id="community-main" className="app-main">
-        {children}
-      </main>
+      <div className="app-main">
+        <AppTopbar />
+        <main id="community-main">{children}</main>
+      </div>
       <nav className="app-mobile-nav" aria-label="Mobile community navigation">
         {[
           ...links.slice(0, 3),

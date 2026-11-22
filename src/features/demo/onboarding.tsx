@@ -11,6 +11,9 @@ import {
   type DemoRole,
   type Interest,
 } from "./demo-provider";
+import { Mascot, MascotPicker } from "@/features/mascots/mascot";
+import { useMascot } from "@/features/mascots/mascot-provider";
+import type { MascotId } from "@/features/mascots/mascots";
 const roles = [
   {
     value: "baker",
@@ -34,6 +37,12 @@ const roles = [
 function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
   const router = useRouter();
   const { savePreferences, storageError } = useDemo();
+  const {
+    mascot,
+    chooseMascot,
+    storageError: mascotStorageError,
+  } = useMascot();
+  const [companion, setCompanion] = useState<MascotId>(mascot);
   const [step, setStep] = useState(0);
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
@@ -51,6 +60,7 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
       role,
       interests: selected,
     });
+    chooseMascot(companion);
     router.push("/app");
   }
   return (
@@ -60,24 +70,37 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
         <Link href="/explore">Just exploring?</Link>
       </header>
       <main className="join-main">
-        <div className="join-art">
-          <img
-            src="/images/cake.jpg"
-            alt="Vanilla cupcakes topped with colourful sprinkles"
-          />
-          <div>
-            <Wheat size={35} />
-            <p>
-              There’s always
-              <br />
-              room for <em>one more.</em>
-            </p>
-          </div>
+        <div className={`join-art ${step === 3 ? "join-art--mascot" : ""}`}>
+          {step === 3 ? (
+            <div className="join-mascot-preview">
+              <Mascot id={companion} sizes="(max-width: 760px) 150px, 310px" />
+              <p>
+                Good company,
+                <br />
+                <em>wherever you crumb.</em>
+              </p>
+            </div>
+          ) : (
+            <>
+              <img
+                src="/images/cake.jpg"
+                alt="Vanilla cupcakes topped with colourful sprinkles"
+              />
+              <div>
+                <Wheat size={35} />
+                <p>
+                  There’s always
+                  <br />
+                  room for <em>one more.</em>
+                </p>
+              </div>
+            </>
+          )}
         </div>
         <section className="join-content">
           <p className="demo-label">FRONTEND DEMO · NO ACCOUNT NEEDED</p>
-          <div className="join-progress" aria-label={`Step ${step + 1} of 3`}>
-            {[0, 1, 2].map((value) => (
+          <div className="join-progress" aria-label={`Step ${step + 1} of 4`}>
+            {[0, 1, 2, 3].map((value) => (
               <span key={value} className={value <= step ? "complete" : ""} />
             ))}
           </div>
@@ -87,6 +110,7 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
                 "PULL UP A CHAIR",
                 "FIND YOUR KIND OF COSY",
                 "A FEW OF YOUR FAVOURITES",
+                "A LITTLE COMPANY",
               ][step]
             }
           </p>
@@ -96,6 +120,7 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
                 "Welcome to the club.",
                 "What brings you here?",
                 "What do you love?",
+                "Choose your companion.",
               ][step]
             }
           </h1>
@@ -105,6 +130,7 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
                 "A little corner for the things we bake and the treats we find. Let’s make it feel like you.",
                 "A baker, a pastry seeker, or somewhere in between. There’s a place for you here.",
                 "Pick one or more interests. They’ll help you find categories you enjoy. You can change them any time.",
+                "A familiar little face around the club. Pick your favourite—you can change it later.",
               ][step]
             }
           </p>
@@ -149,7 +175,7 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
                 </label>
               ))}
             </fieldset>
-          ) : (
+          ) : step === 2 ? (
             <fieldset className="interest-options">
               <legend className="sr-only">Choose at least one interest</legend>
               {interests.map((interest) => (
@@ -173,6 +199,8 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
                 </label>
               ))}
             </fieldset>
+          ) : (
+            <MascotPicker value={companion} onChange={setCompanion} />
           )}
           <div className="join-actions">
             {step > 0 && (
@@ -185,16 +213,16 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
               disabled={
                 (step === 1 && !role) || (step === 2 && !selected.length)
               }
-              onClick={() => (step < 2 ? setStep(step + 1) : finish())}
+              onClick={() => (step < 3 ? setStep(step + 1) : finish())}
             >
               {step === 0
                 ? "Enter demo mode"
-                : step === 1
+                : step < 3
                   ? "Continue"
                   : "Make yourself at home"}
             </button>
           </div>
-          {storageError && (
+          {(storageError || mascotStorageError) && (
             <p className="join-storage" role="status">
               Browser storage is unavailable. You can still try the demo;
               preferences will last for this visit.
@@ -213,7 +241,8 @@ function OnboardingForm({ initial }: { initial: DemoPreferences | null }) {
 }
 export function Onboarding() {
   const { ready, preferences } = useDemo();
-  return ready ? (
+  const { ready: mascotReady } = useMascot();
+  return ready && mascotReady ? (
     <OnboardingForm initial={preferences} />
   ) : (
     <div className="join-loading" role="status">

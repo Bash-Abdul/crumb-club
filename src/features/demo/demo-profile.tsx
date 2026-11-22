@@ -10,6 +10,8 @@ import { getPost, resolveFeedItem } from "@/data/content";
 import { useBakers } from "@/features/profiles/bakers-provider";
 import { BakerAvatar } from "@/features/profiles/baker-avatar";
 import { FollowButton } from "@/features/profiles/follow-button";
+import { ProfileMascot } from "@/features/mascots/profile-mascot";
+import { Mascot } from "@/features/mascots/mascot";
 import { ProfileEditor } from "@/features/profiles/profile-editor";
 export function DemoProfile({
   bakerId = CURRENT_BAKER_ID,
@@ -133,6 +135,7 @@ export function DemoProfile({
           now.
         </p>
       )}
+      {own && <ProfileMascot />}
       {interests.length > 0 && (
         <section className="profile-interests">
           <h2>
@@ -198,7 +201,7 @@ export function DemoProfile({
           </ul>
         ) : (
           <div className="profile-empty">
-            <ChefHat size={25} />
+            <Mascot />
             <p>
               {own
                 ? "Your first little story is still to come."
@@ -247,7 +250,7 @@ export function DemoProfile({
             </ul>
           ) : (
             <div className="profile-empty">
-              <ChefHat size={25} />
+              <Mascot />
               <p>
                 Your next favourite is out there.
                 <br />

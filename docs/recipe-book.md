@@ -11,7 +11,7 @@ The Recipes collection now opens `/recipes`, a single community recipe book. The
 - Bookmarks share the existing local activity state with Home, Explore and profiles.
 - Recipe pages use paper margins, contributor credits, prep/bake/yield details, ingredients alongside method, kitchen notes and page-to-page links.
 - Ingredient checklists, photographs, reactions and comments remain available.
-- The left sidebar includes a warm croissant note: “A community for bakers, bakery lovers and the just curious.”
+- The left sidebar includes a warm note with the selected mascot: “A community for bakers, bakery lovers and the just curious.”
 - Desktop Recipes links and the mobile bottom navigation open the book. Home’s “From the recipe book” heading links to its contents.
 - Add a recipe opens the existing `/create?type=recipe` editor. This remains a local draft flow; it does not publish a contribution into the book.
 

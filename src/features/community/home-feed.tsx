@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Fragment } from "react";
 import type { FeedItem } from "./types";
-import { Bookmark, Wheat } from "lucide-react";
+import { Wheat } from "lucide-react";
 import {
   feedItems,
   socialPosts,
@@ -16,6 +16,7 @@ import { useCommunity } from "./activity-provider";
 import { useDemo } from "@/features/demo/demo-provider";
 import { useBakers } from "@/features/profiles/bakers-provider";
 import { RecipeBook } from "@/features/recipe-book/recipe-book";
+import { Mascot } from "@/features/mascots/mascot";
 import { HomeComposer } from "./home-composer";
 import { selectHomeFeed } from "./feed-selection";
 import { FeedPost, RecipeActivity } from "./feed-post";
@@ -85,7 +86,10 @@ export function HomeFeed() {
   if (filter === "recipes") return <RecipeBook />;
   return (
     <>
-      <h1 className="mobile-home-title">Your community feed</h1>
+      <h1 className="mobile-home-title">
+        <span>Your community feed</span>
+        <Mascot className="mobile-feed-companion" />
+      </h1>
       <header className="community-heading">
         <div>
           <h1>
@@ -159,7 +163,7 @@ export function HomeFeed() {
               })
             ) : (
               <div className="feed-empty">
-                <Bookmark size={28} />
+                <Mascot />
                 <h2>
                   {filter === "following"
                     ? "A little quiet here."

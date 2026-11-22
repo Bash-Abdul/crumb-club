@@ -10,6 +10,7 @@ import {
   Search,
   Wheat,
 } from "lucide-react";
+import { Mascot } from "@/features/mascots/mascot";
 import { recipes } from "@/data/content";
 import { profileHref } from "@/data/bakers";
 import {
@@ -221,7 +222,7 @@ export function RecipeBook() {
           </div>
         ) : (
           <div className="book-empty">
-            <BookOpen size={30} strokeWidth={1.2} />
+            <Mascot />
             <h3>
               {chapter === "Bookmarked" && !query
                 ? "Keep a page for later."
