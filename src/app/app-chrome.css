@@ -1,0 +1,554 @@
+/* Familiar account controls, with room for a little personality. */
+.app-topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 13px;
+  min-height: 44px;
+  margin-bottom: 27px;
+  position: relative;
+  z-index: 50;
+}
+.topbar-brand {
+  display: none;
+}
+.topbar-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(360px, 65%);
+  padding: 5px 8px 5px 14px;
+  min-height: 44px;
+  border: 1px solid #efdfd0;
+  border-radius: 24px;
+  background: #faeee3;
+  color: var(--cocoa);
+}
+.topbar-search > svg {
+  flex-shrink: 0;
+}
+.topbar-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--espresso);
+  font-size: 12px;
+}
+.topbar-search input::placeholder {
+  color: #896553;
+  opacity: 1;
+}
+.topbar-search:focus-within {
+  outline: 2px solid var(--cocoa);
+  outline-offset: 3px;
+}
+.topbar-search > button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  min-height: 32px;
+  flex-shrink: 0;
+  border: 0;
+  background: none;
+  color: var(--cocoa);
+}
+.topbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: var(--cream);
+  border: 1px solid #ebdbcd;
+  border-radius: 50%;
+  color: var(--espresso);
+}
+.topbar-icon-button:hover {
+  background: #faeddf;
+}
+.topbar-search-toggle {
+  display: none;
+}
+.topbar-profile {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: var(--butter);
+  border: 1px solid #f0d39d;
+  border-radius: 50%;
+  font: 500 19px/1 var(--serif);
+}
+.topbar-notifications {
+  position: relative;
+}
+.notification-panel {
+  position: absolute;
+  right: -54px;
+  top: 56px;
+  width: min(330px, calc(100vw - 32px));
+  background: #fffbf5;
+  border: 1px solid var(--line);
+  box-shadow: 0 15px 45px #381f141c;
+  border-radius: 12px;
+  padding: 16px 20px 22px;
+  text-align: center;
+}
+.notification-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  text-align: left;
+}
+.notification-panel-heading h2 {
+  font-size: 22px;
+  letter-spacing: -0.5px;
+}
+.notification-panel-heading .topbar-icon-button {
+  border: 0;
+  width: 36px;
+  height: 36px;
+}
+.notification-panel > .club-mascot {
+  margin: 6px auto;
+  width: 155px;
+  height: 110px;
+}
+.notification-panel > h3 {
+  font-size: 25px;
+  letter-spacing: -0.5px;
+  margin-top: 4px;
+}
+.notification-panel > p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-top: 12px;
+}
+.notification-panel > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 14px;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  color: var(--cocoa);
+}
+.sidebar-bottom {
+  padding-top: 60px;
+}
+.sidebar-community-note {
+  padding-top: 49px;
+  margin-bottom: 4px;
+}
+.sidebar-community-note .sidebar-companion {
+  position: absolute;
+  top: -51px;
+  right: 12px;
+  width: 135px;
+  height: 101px;
+  transform: rotate(-7deg);
+}
+.sidebar-community-note .sidebar-companion > img {
+  transform: scale(1.25);
+}
+.club-mascot {
+  display: inline-flex;
+  width: 140px;
+  height: 105px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.club-mascot > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.feed-empty > .club-mascot,
+.profile-empty > .club-mascot,
+.discovery-empty > .club-mascot {
+  display: flex;
+  margin-inline: auto;
+  width: 145px;
+  height: 105px;
+}
+.mascot-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+  border: 0;
+  padding: 0;
+  margin: 25px 0 0;
+  min-width: 0;
+}
+.mascot-options > label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  padding: 13px 12px 16px;
+  border: 1px solid #e6d5c3;
+  border-radius: 8px;
+  background: #fffbf5;
+  text-align: center;
+  cursor: pointer;
+  min-width: 0;
+}
+.mascot-options > label.selected {
+  background: #fff0d3;
+  border-color: #aa754c;
+}
+.mascot-options > label:focus-within {
+  outline: 2px solid var(--cocoa);
+  outline-offset: 3px;
+}
+.mascot-options input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.mascot-options .club-mascot {
+  width: min(155px, 100%);
+  height: 90px;
+}
+.mascot-options strong {
+  font: 500 19px/1.2 var(--serif);
+  margin-top: 7px;
+}
+.mascot-options small {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 6px;
+}
+.mascot-choice-mark {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  border: 1px solid #d4bca3;
+  border-radius: 50%;
+  font-size: 11px;
+  color: var(--cream);
+}
+.selected .mascot-choice-mark {
+  background: var(--cocoa);
+  border-color: var(--cocoa);
+}
+.join-progress {
+  width: 155px;
+}
+.join-art--mascot {
+  background: #f9e5bf;
+}
+.join-art > .join-mascot-preview {
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 35px;
+  background: transparent;
+  color: var(--espresso);
+  text-align: center;
+}
+.join-mascot-preview .club-mascot {
+  width: min(310px, 100%);
+  height: 240px;
+}
+.join-mascot-preview p {
+  font-size: 34px;
+}
+.join-mascot-preview em {
+  color: var(--cocoa);
+}
+.profile-mascot {
+  padding: 24px 0;
+  margin-top: 20px;
+  border-block: 1px solid var(--line);
+}
+.profile-mascot-heading {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+.profile-mascot-heading > .club-mascot {
+  width: 105px;
+  height: 85px;
+}
+.profile-mascot-heading .eyebrow {
+  font-size: 9px;
+  letter-spacing: 1.4px;
+}
+.profile-mascot-heading h2 {
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+  margin-top: 6px;
+}
+.profile-mascot-heading p:last-child {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 6px;
+}
+.profile-mascot-heading button {
+  min-height: 44px;
+  margin-left: auto;
+  padding: 9px 0;
+  color: var(--cocoa);
+  border: 0;
+  background: none;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.profile-mascot .mascot-options {
+  max-width: 650px;
+}
+.explore-baker-results {
+  margin: 0 0 25px;
+  padding: 19px 0;
+  border-block: 1px solid var(--line);
+}
+.explore-baker-results h2 {
+  font-size: 25px;
+  letter-spacing: -0.6px;
+}
+.explore-baker-results > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  margin-top: 16px;
+}
+.explore-baker-results a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 52px;
+  min-width: 180px;
+}
+.explore-baker-results .avatar {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+}
+.explore-baker-results strong {
+  display: block;
+  font-size: 12px;
+}
+.explore-baker-results small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .notification-panel {
+    animation: crumb-arrive 180ms ease-out;
+  }
+  .mascot-options label {
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease;
+  }
+}
+@media (max-width: 767px) {
+  .app-main {
+    padding-top: 0;
+  }
+  .app-topbar {
+    position: sticky;
+    top: 0;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    min-height: 67px;
+    padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+    margin: 0 -14px 20px;
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-brand {
+    display: block;
+  }
+  .topbar-brand .brand {
+    gap: 5px;
+  }
+  .topbar-brand .brand > svg {
+    width: 20px;
+    height: 24px;
+  }
+  .topbar-brand .brand > span {
+    font-size: 24px;
+    letter-spacing: -1px;
+  }
+  .topbar-brand .brand-dot {
+    font-size: 18px;
+  }
+  .topbar-controls {
+    gap: 6px;
+  }
+  .topbar-icon-button,
+  .topbar-profile {
+    width: 40px;
+    height: 40px;
+  }
+  .topbar-search-toggle {
+    display: grid;
+    border-color: transparent;
+    background: none;
+  }
+  .topbar-profile {
+    font-size: 17px;
+  }
+  .topbar-notifications > .topbar-icon-button {
+    border-color: transparent;
+    background: none;
+  }
+  .topbar-search {
+    order: 3;
+    display: none;
+    width: 100%;
+    max-width: none;
+    margin-top: 10px;
+  }
+  .app-topbar[data-search-open="true"] .topbar-search {
+    display: flex;
+  }
+  .notification-panel {
+    right: -46px;
+    top: 53px;
+  }
+  .mascot-options {
+    gap: 12px;
+  }
+  .mascot-options > label {
+    padding: 12px 9px 15px;
+  }
+  .mascot-options strong {
+    font-size: 18px;
+  }
+  .mascot-options small {
+    font-size: 9px;
+  }
+  .mascot-options .club-mascot {
+    height: 83px;
+  }
+  .profile-mascot-heading {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 8px 12px;
+  }
+  .profile-mascot-heading > .club-mascot {
+    width: 80px;
+    height: 80px;
+  }
+  .profile-mascot-heading button {
+    grid-column: 2;
+    justify-self: start;
+    margin-left: 0;
+  }
+  .profile-mascot-heading h2 {
+    font-size: 24px;
+  }
+  .profile-mascot-heading p:last-child {
+    font-size: 11px;
+  }
+}
+@media (max-width: 370px) {
+  .app-topbar {
+    margin-inline: -11px;
+    padding-inline: 11px;
+  }
+  .topbar-brand .brand > span {
+    font-size: 21px;
+  }
+  .topbar-brand .brand > svg {
+    width: 17px;
+  }
+  .topbar-brand .brand-dot {
+    font-size: 15px;
+  }
+  .topbar-controls {
+    gap: 3px;
+  }
+  .topbar-icon-button,
+  .topbar-profile {
+    width: 38px;
+    height: 40px;
+  }
+  .notification-panel {
+    right: -41px;
+  }
+}
+.book-empty > .club-mascot {
+  display: flex;
+  margin-inline: auto;
+  width: 145px;
+  height: 105px;
+}
+.mobile-home-title > .mobile-feed-companion {
+  display: none;
+}
+@media (max-width: 767px) {
+  .mobile-home-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .mobile-home-title > .mobile-feed-companion {
+    display: inline-flex;
+    width: 72px;
+    height: 54px;
+  }
+}
+.sidebar-rail-companion {
+  display: none;
+}
+@media (min-width: 768px) and (max-width: 900px) {
+  .sidebar-rail-companion {
+    display: inline-flex;
+    width: 58px;
+    height: 65px;
+  }
+}
+@media (max-width: 767px) {
+  .mobile-home-title {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    font: 500 23px/1.2 var(--serif);
+    letter-spacing: -0.6px;
+    margin: -4px 0 16px;
+  }
+}
+.club-mascot {
+  overflow: hidden;
+}
+.club-mascot[data-mascot="crumb"] > img {
+  transform: scale(1.35);
+}

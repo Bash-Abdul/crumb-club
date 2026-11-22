@@ -12,9 +12,8 @@ import {
   MapPin,
 } from "lucide-react";
 import { Brand } from "./brand";
-import { useBakers } from "@/features/profiles/bakers-provider";
-import { BakerAvatar } from "@/features/profiles/baker-avatar";
-import { CURRENT_BAKER_ID } from "@/data/bakers";
+import { AppTopbar } from "./app-topbar";
+import { Mascot } from "@/features/mascots/mascot";
 const links = [
   { href: "/app", label: "Home", Icon: Home },
   { href: "/explore", label: "Explore", Icon: Compass },
@@ -33,9 +32,10 @@ function CollectionLinks() {
       ].map(({ filter, label, Icon }) => (
         <Link
           key={filter}
-          href={`/app?feed=${filter}`}
+          href={filter === "recipes" ? "/recipes" : `/app?feed=${filter}`}
           aria-current={
-            pathname === "/app" && params.get("feed") === filter
+            (filter === "recipes" && pathname.startsWith("/recipes")) ||
+            (pathname === "/app" && params.get("feed") === filter)
               ? "page"
               : undefined
           }
@@ -49,15 +49,15 @@ function CollectionLinks() {
 }
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { currentBaker, hasProfile } = useBakers();
-  const name = currentBaker.name;
   const current = (href: string) =>
     pathname === href ||
+    (href === "/recipes" && pathname.startsWith("/recipes/")) ||
     (href === "/profile" && pathname.startsWith("/profile/")) ||
-    (href === "/app" &&
-      (pathname.startsWith("/posts/") || pathname.startsWith("/recipes/")));
+    (href === "/app" && pathname.startsWith("/posts/"));
   return (
-    <div className="app-shell">
+    <div
+      className={`app-shell ${pathname.startsWith("/recipes/") ? "app-shell--recipe" : ""}`}
+    >
       <a className="skip" href="#community-main">
         Skip to content
       </a>
@@ -83,39 +83,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Suspense>
         </div>
         <div className="sidebar-bottom">
-          <Link href="/" className="sidebar-about">
-            A little about the club
-          </Link>
-          <Link
-            href={hasProfile ? "/profile" : "/join"}
-            className="sidebar-user"
-          >
-            <BakerAvatar id={CURRENT_BAKER_ID} />
-            <span>
-              <strong>{name}</strong>
-              <small>
-                {hasProfile ? "Your demo profile" : "Make yourself at home"}
-              </small>
-            </span>
-          </Link>
-          <p className="sidebar-demo">Demo community · saved on this device</p>
+          <Mascot className="sidebar-rail-companion" />
+          <div className="sidebar-community-note">
+            <Mascot className="sidebar-companion" />
+            <p>A community for bakers, bakery lovers and the just curious.</p>
+          </div>
         </div>
       </aside>
-      <header className="app-mobile-header">
-        <Brand />
-        <Link
-          href={hasProfile ? "/profile" : "/join"}
-          className="mobile-avatar"
-          aria-label={hasProfile ? "Your demo profile" : "Enter demo mode"}
-        >
-          <BakerAvatar id={CURRENT_BAKER_ID} />
-        </Link>
-      </header>
-      <main id="community-main" className="app-main">
-        {children}
-      </main>
+      <div className="app-main">
+        <AppTopbar />
+        <main id="community-main">{children}</main>
+      </div>
       <nav className="app-mobile-nav" aria-label="Mobile community navigation">
-        {links.map(({ href, label, Icon }) => (
+        {[
+          ...links.slice(0, 3),
+          { href: "/recipes", label: "Recipes", Icon: BookOpen },
+          links[3],
+        ].map(({ href, label, Icon }) => (
           <Link
             key={href}
             href={href}

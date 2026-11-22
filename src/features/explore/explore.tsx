@@ -3,7 +3,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
-  Search,
   CakeSlice,
   Cookie,
   Croissant,
@@ -12,7 +11,6 @@ import {
   Grid2X2,
   Bookmark,
   MapPin,
-  X,
   MessageCircle,
 } from "lucide-react";
 import {
@@ -23,6 +21,7 @@ import {
 import { useActivity } from "@/features/community/activity-provider";
 import { getPost, getRecipe } from "@/data/content";
 import { bakers, profileHref } from "@/data/bakers";
+import { Mascot } from "@/features/mascots/mascot";
 import { matchesCategory } from "@/features/community/classification";
 const categories = [
   { value: "Cakes", Icon: CakeSlice },
@@ -91,7 +90,7 @@ function DiscoveryTile({ post }: { post: CommunityPost }) {
 export function Explore() {
   const params = useSearchParams();
   const router = useRouter();
-  const [query, setQuery] = useState("");
+  const query = params.get("q") ?? "";
   const [more, setMore] = useState(false);
   const bakerId = params.get("baker") ?? "";
   const baker = bakers.find((person) => person.id === bakerId);
@@ -102,6 +101,7 @@ export function Explore() {
     const next = new URLSearchParams();
     if (value) next.set("category", value);
     if (bakerId) next.set("baker", bakerId);
+    if (query.trim()) next.set("q", query.trim());
     router.replace(next.size ? `/explore?${next.toString()}` : "/explore", {
       scroll: false,
     });
@@ -121,6 +121,13 @@ export function Explore() {
       `${post.title} ${post.story} ${post.author} ${bakedCategory} ${tags.join(" ")}`.toLowerCase();
     return text.includes(query.toLowerCase().trim());
   });
+  const matchingBakers = query.trim()
+    ? bakers.filter((person) =>
+        `${person.name} ${person.handle} ${person.bio}`
+          .toLowerCase()
+          .includes(query.trim().toLowerCase()),
+      )
+    : [];
   const filtered = !!category || !!query.trim() || !!bakerId;
   return (
     <div className="explore-page">
@@ -131,20 +138,6 @@ export function Explore() {
         </h1>
         <p>Something to bake. Somewhere to try.</p>
       </header>
-      <label className="explore-search">
-        <Search size={20} />
-        <span className="sr-only">Search bakes, recipes and bakeries</span>
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search bakes, recipes, bakeries…"
-        />
-        {query && (
-          <button aria-label="Clear search" onClick={() => setQuery("")}>
-            <X size={18} />
-          </button>
-        )}
-      </label>
       <div
         className="explore-categories"
         role="group"
@@ -182,6 +175,25 @@ export function Explore() {
           ))}
         </div>
       )}
+      {matchingBakers.length > 0 && (
+        <section
+          className="explore-baker-results"
+          aria-label="Bakers matching your search"
+        >
+          <h2>Bakers</h2>
+          <div>
+            {matchingBakers.map((person) => (
+              <Link key={person.id} href={profileHref(person.id)}>
+                <span className="avatar">{person.initials}</span>
+                <span>
+                  <strong>{person.name}</strong>
+                  <small>@{person.handle}</small>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
       {filtered ? (
         <section className="explore-results">
           <div className="explore-section-title">
@@ -189,12 +201,15 @@ export function Explore() {
               {baker
                 ? `${baker.name}’s posts${category ? ` · ${category}` : ""}`
                 : category ||
-                  (bakerId ? "Baker’s posts" : "Search results")}{" "}
+                  (bakerId
+                    ? "Baker’s posts"
+                    : query.trim()
+                      ? "Posts & recipes"
+                      : "Search results")}{" "}
               <span>({visible.length})</span>
             </h2>
             <button
               onClick={() => {
-                setQuery("");
                 router.replace("/explore", { scroll: false });
               }}
             >
@@ -209,7 +224,7 @@ export function Explore() {
             </div>
           ) : (
             <div className="discovery-empty" role="status">
-              <Cookie size={30} />
+              <Mascot />
               <h2>Not a crumb here just yet.</h2>
               <p>
                 Our demo has a small recipe box. Try pastries, cupcakes or
@@ -218,7 +233,6 @@ export function Explore() {
               <button
                 className="button"
                 onClick={() => {
-                  setQuery("");
                   router.replace("/explore", { scroll: false });
                 }}
               >

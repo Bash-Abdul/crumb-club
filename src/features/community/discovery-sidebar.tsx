@@ -42,7 +42,9 @@ export function DiscoverySidebar() {
         aria-labelledby="sidebar-recipe-heading"
       >
         <div className="discovery-section-title">
-          <h2 id="sidebar-recipe-heading">From the recipe book</h2>
+          <h2 id="sidebar-recipe-heading">
+            <Link href="/recipes">From the recipe book</Link>
+          </h2>
           <BookOpen size={17} />
         </div>
         <ul className="sidebar-recipe-list">

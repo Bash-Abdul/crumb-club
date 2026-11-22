@@ -1,59 +1,175 @@
 import Link from "next/link";
 import { profileHref } from "@/data/bakers";
 import { BakerAvatar } from "@/features/profiles/baker-avatar";
-import { ChevronLeft } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  Clock,
+  Users,
+} from "lucide-react";
 import type { Recipe } from "./types";
-import { recipeTarget } from "@/data/content";
+import { recipes, recipeTarget } from "@/data/content";
 import { PostActions } from "./post-actions";
 import { RecipeBody } from "./recipe-body";
 import { ImageGallery } from "./image-gallery";
+import {
+  KitchenSummary,
+  RecipeKitchens,
+} from "@/features/recipe-book/recipe-kitchens";
 import { Comments } from "./comments";
-import { AuthorNote } from "./author-note";
+
 export function RecipeDetail({ recipe }: { recipe: Recipe }) {
+  const index = recipes.findIndex((item) => item.id === recipe.id);
+  const previous = recipes[index - 1];
+  const next = recipes[index + 1];
+  const number = String(index + 1).padStart(2, "0");
   return (
-    <div className="post-detail standalone-recipe">
-      <Link className="back-link" href="/app">
-        <ChevronLeft size={17} /> Back to the community
-      </Link>
-      <div className="detail-heading">
-        <p className="eyebrow">FROM THE COMMUNITY RECIPE BOOK</p>
-        <h1>{recipe.title}</h1>
-        <div className="feed-author">
-          <Link
-            className="avatar"
-            href={profileHref(recipe.author.id)}
-            aria-label={`View ${recipe.author.name}’s profile`}
-          >
-            <BakerAvatar
-              id={recipe.author.id}
-              className="baker-avatar-content"
-            />
-          </Link>
-          <div>
+    <div className="book-recipe-page">
+      <nav className="book-page-nav" aria-label="Recipe book navigation">
+        <Link href="/recipes">
+          <BookOpen size={16} /> The recipe book
+        </Link>
+        <span>
+          PAGE {number} <span aria-hidden="true">/</span>{" "}
+          {String(recipes.length).padStart(2, "0")}
+        </span>
+        <div>
+          {previous && (
             <Link
-              href={profileHref(recipe.author.id)}
-              className="author-name-link"
+              href={`/recipes/${previous.id}`}
+              aria-label={`Previous recipe: ${previous.title}`}
             >
-              <strong>{recipe.author.name}</strong>
+              <ArrowLeft size={16} />
             </Link>
-            <span>{recipe.time} · Shared a recipe</span>
+          )}
+          {next && (
+            <Link
+              href={`/recipes/${next.id}`}
+              aria-label={`Next recipe: ${next.title}`}
+            >
+              <ArrowRight size={16} />
+            </Link>
+          )}
+        </div>
+      </nav>
+      <div className="book-recipe-workspace">
+        <article className="book-recipe-paper">
+          <header className="book-recipe-intro">
+            <div className="book-recipe-title">
+              <p className="book-edition">
+                {recipe.category} <span>NO. {number}</span>
+              </p>
+              <h1>{recipe.title}</h1>
+              <Link
+                className="book-recipe-credit"
+                href={profileHref(recipe.author.id)}
+              >
+                <BakerAvatar id={recipe.author.id} />
+                <span>
+                  Contributed by <strong>{recipe.author.name}</strong>
+                </span>
+              </Link>
+              <p className="book-recipe-description">
+                {recipe.description.split(". ").slice(0, 2).join(". ")}
+                {recipe.description.split(". ").length > 2 ? "." : ""}
+              </p>
+              <div className="book-quick-stats">
+                {recipe.prep && (
+                  <span>
+                    <Clock size={15} />
+                    <span>
+                      <small>PREP</small>
+                      {recipe.prep}
+                    </span>
+                  </span>
+                )}
+                {recipe.bake && (
+                  <span>
+                    <span>
+                      <small>BAKE</small>
+                      {recipe.bake}
+                    </span>
+                  </span>
+                )}
+                {recipe.yield && (
+                  <span>
+                    <Users size={15} />
+                    <span>
+                      <small>MAKES</small>
+                      {recipe.yield}
+                    </span>
+                  </span>
+                )}
+              </div>
+              <KitchenSummary recipeId={recipe.id} />
+              <a className="book-jump" href="#recipe">
+                Apron on. Let’s begin. <ArrowDown size={15} />
+              </a>
+            </div>
+            <div className="book-recipe-cover">
+              <img
+                src={recipe.cover.src}
+                alt={recipe.cover.alt}
+                width={recipe.cover.width}
+                height={recipe.cover.height}
+                fetchPriority="high"
+              />
+              <span className="book-page-marker">{number}</span>
+            </div>
+          </header>
+          <div className="book-recipe-reactions">
+            <span>One for the recipe book.</span>
+            <PostActions target={recipeTarget(recipe)} />
           </div>
+          <RecipeBody key={recipe.id} recipe={recipe} />
+          <aside className="book-kitchen-note">
+            <span className="book-edition">
+              A NOTE FROM {recipe.author.name.toUpperCase()}’S KITCHEN
+            </span>
+            <p>{recipe.description}</p>
+            <Link href={profileHref(recipe.author.id)}>
+              More from {recipe.author.name} <ArrowRight size={14} />
+            </Link>
+          </aside>
+          {recipe.additionalImages?.length ? (
+            <div className="book-extra-photos">
+              <h2>A peek at the process.</h2>
+              <ImageGallery
+                images={recipe.additionalImages}
+                label={`${recipe.title}: kitchen photos`}
+              />
+            </div>
+          ) : null}
+          <footer className="book-page-footer">
+            <span>
+              Crumb Club <span aria-hidden="true">·</span> The community edition
+            </span>
+            <span>{number}</span>
+          </footer>
+        </article>
+        <aside
+          className="book-kitchens-rail"
+          aria-label="Notes from bakers who tried this recipe"
+        >
+          <RecipeKitchens key={recipe.id} recipeId={recipe.id} />
+        </aside>
+        <div className="book-table-talk book-recipe-discussion">
+          <p className="book-edition">AROUND THE KITCHEN TABLE</p>
+          <Comments id={recipe.id} initial={recipe.comments} />
         </div>
       </div>
-      <ImageGallery
-        detail
-        images={[recipe.cover, ...(recipe.additionalImages ?? [])]}
-        label={recipe.title}
-      />
-      <div className="detail-columns">
-        <article className="detail-story">
-          <PostActions target={recipeTarget(recipe)} />
-          <p className="detail-caption">{recipe.description}</p>
-          <RecipeBody recipe={recipe} />
-          <Comments id={recipe.id} initial={recipe.comments} />
-        </article>
-        <AuthorNote author={recipe.author} />
-      </div>
+      <Link
+        className="book-next-page"
+        href={next ? `/recipes/${next.id}` : "/recipes"}
+      >
+        <span>
+          <small>{next ? "TURN THE PAGE" : "BACK TO THE CONTENTS"}</small>
+          {next ? next.title : "Find your next favourite."}
+        </span>
+        <ArrowRight size={22} />
+      </Link>
     </div>
   );
 }

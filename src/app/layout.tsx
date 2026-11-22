@@ -3,8 +3,12 @@ import "./globals.css";
 import "./application.css";
 import "./community-taste.css";
 import "./motion.css";
+import "./recipe-book.css";
+import "./app-chrome.css";
+import { MascotProvider } from "@/features/mascots/mascot-provider";
 import { DemoProvider } from "@/features/demo/demo-provider";
 import { BakersProvider } from "@/features/profiles/bakers-provider";
+import { KitchenProvider } from "@/features/recipe-book/kitchen-provider";
 import { ActivityProvider } from "@/features/community/activity-provider";
 export const metadata: Metadata = {
   title: "Crumb Club — For the love of all things baked",
@@ -18,9 +22,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <DemoProvider>
-          <BakersProvider>
-            <ActivityProvider>{children}</ActivityProvider>
-          </BakersProvider>
+          <MascotProvider>
+            <BakersProvider>
+              <ActivityProvider>
+                <KitchenProvider>{children}</KitchenProvider>
+              </ActivityProvider>
+            </BakersProvider>
+          </MascotProvider>
         </DemoProvider>
       </body>
     </html>

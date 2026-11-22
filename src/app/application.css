@@ -3969,3 +3969,58 @@
 .popular-baker-row small {
   font-size: 10px;
 }
+
+/* A small bakery-window reminder at the foot of the community navigation. */
+.sidebar-community-note {
+  position: relative;
+  background: #ffedc6;
+  border-radius: 70px 65px 60px 35px;
+  padding: 37px 18px 27px;
+  margin: 20px 0 27px;
+  isolation: isolate;
+}
+.sidebar-community-note > p {
+  position: relative;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #53331f;
+}
+.sidebar-croissant {
+  position: absolute;
+  top: -21px;
+  right: 23px;
+  color: #94531f;
+  transform: rotate(-12deg);
+}
+.sidebar-croissant > svg:first-child {
+  fill: #ffe0a0;
+}
+.sidebar-note-rays {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  top: -9px;
+  right: -18px;
+  fill: none;
+  stroke: var(--caramel);
+  stroke-width: 2.3;
+  stroke-linecap: round;
+}
+@media (min-width: 901px) and (max-height: 850px) {
+  .sidebar-community-note {
+    padding: 28px 15px 20px;
+    margin-top: 12px;
+  }
+  .sidebar-community-note > p {
+    font-size: 11px;
+  }
+  .sidebar-croissant > svg:first-child {
+    width: 48px;
+    height: 48px;
+  }
+}
+@media (max-width: 900px) {
+  .sidebar-community-note {
+    display: none;
+  }
+}
