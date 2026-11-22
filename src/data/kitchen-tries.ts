@@ -16,16 +16,18 @@ export const sampleKitchenTries: KitchenTry[] = [
   },
   {
     recipeId: "cinnamon-buns",
+    weekIds: ["cinnamon-together"],
     authorId: "noor",
     note: "Left a little more room between the buns this time. Soft middles, crisp edges. Worth the slow afternoon.",
     photo: "/images/buns-table.jpg",
-    updatedAt: "2026-11-20T15:00:00Z",
+    updatedAt: "2026-11-14T15:00:00Z",
   },
   {
     recipeId: "cinnamon-buns",
+    weekIds: ["cinnamon-together"],
     authorId: "james",
     note: "My kitchen was chilly, so the first rise took an extra half hour. Waiting until the dough doubled made all the difference.",
-    updatedAt: "2026-11-18T17:00:00Z",
+    updatedAt: "2026-11-12T17:00:00Z",
   },
   {
     recipeId: "chocolate-chip-cookies",

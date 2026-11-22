@@ -12,6 +12,9 @@ import {
   Bookmark,
   MapPin,
   MessageCircle,
+  ArrowUpRight,
+  ArrowRight,
+  CheckCircle2,
 } from "lucide-react";
 import {
   allContentPreviews as posts,
@@ -22,7 +25,17 @@ import { useActivity } from "@/features/community/activity-provider";
 import { getPost, getRecipe } from "@/data/content";
 import { bakers, profileHref } from "@/data/bakers";
 import { Mascot } from "@/features/mascots/mascot";
-import { matchesCategory } from "@/features/community/classification";
+import {
+  matchesExploreCategory,
+  selectExternalDiscoveries,
+  communityTopics,
+} from "./discovery-selection";
+import { bakingCategories } from "@/data/categories";
+import { externalDiscoveries } from "@/data/external-discoveries";
+import { ExternalDiscoveries } from "./external-discoveries";
+import { BakerAvatar } from "@/features/profiles/baker-avatar";
+import { useBakerTries } from "@/features/recipe-book/kitchen-provider";
+import { CURRENT_BAKER_ID } from "@/data/bakers";
 const categories = [
   { value: "Cakes", Icon: CakeSlice },
   { value: "Cookies", Icon: Cookie },
@@ -96,7 +109,13 @@ export function Explore() {
   const baker = bakers.find((person) => person.id === bakerId);
   const raw = params.get("category") ?? "";
   const category =
-    raw === "recipes" ? "Recipes" : raw === "bakeries" ? "Bakeries" : raw;
+    raw.toLowerCase() === "recipes"
+      ? "Recipes"
+      : raw.toLowerCase() === "bakeries"
+        ? "Bakeries"
+        : (bakingCategories.find(
+            (value) => value.toLowerCase() === raw.toLowerCase(),
+          ) ?? raw);
   function select(value: string) {
     const next = new URLSearchParams();
     if (value) next.set("category", value);
@@ -110,7 +129,7 @@ export function Explore() {
     const resource = getPost(post.id) ?? getRecipe(post.id);
     if (
       !resource ||
-      !matchesCategory(resource, category) ||
+      !matchesExploreCategory(resource, category) ||
       (bakerId && resource.author.id !== bakerId)
     )
       return false;
@@ -118,7 +137,7 @@ export function Explore() {
     const bakedCategory =
       "category" in resource ? (resource.category ?? "") : "";
     const text =
-      `${post.title} ${post.story} ${post.author} ${bakedCategory} ${tags.join(" ")}`.toLowerCase();
+      `${post.title} ${post.story} ${post.author} ${bakedCategory} ${tags.join(" ")} ${(communityTopics[resource.id] ?? []).join(" ")}`.toLowerCase();
     return text.includes(query.toLowerCase().trim());
   });
   const matchingBakers = query.trim()
@@ -128,6 +147,31 @@ export function Explore() {
           .includes(query.trim().toLowerCase()),
       )
     : [];
+  const outside = selectExternalDiscoveries(
+    externalDiscoveries,
+    category,
+    query,
+    bakerId,
+  );
+  const ownTries = useBakerTries(CURRENT_BAKER_ID).filter((entry) => {
+    const recipe = getRecipe(entry.recipeId);
+    return (
+      !bakerId &&
+      recipe &&
+      matchesExploreCategory(recipe, category) &&
+      `${recipe.title} ${entry.note}`
+        .toLowerCase()
+        .includes(query.trim().toLowerCase())
+    );
+  });
+  const selectedPeople = query.trim()
+    ? matchingBakers
+    : !category && !bakerId
+      ? bakers.slice(0, 3)
+      : [];
+  const externalFind = externalDiscoveries.find(
+    (item) => item.type === "bakery",
+  )!;
   const filtered = !!category || !!query.trim() || !!bakerId;
   return (
     <div className="explore-page">
@@ -147,6 +191,10 @@ export function Explore() {
           <button
             key={value}
             aria-pressed={value === "More" ? more : category === value}
+            aria-expanded={value === "More" ? more : undefined}
+            aria-controls={
+              value === "More" ? "explore-more-categories" : undefined
+            }
             onClick={() =>
               value === "More"
                 ? setMore(!more)
@@ -161,10 +209,17 @@ export function Explore() {
       {more && (
         <div
           className="more-categories"
+          id="explore-more-categories"
           role="group"
           aria-label="More categories"
         >
-          {["Brownies", "Pancakes", "Recipes", "Bakeries"].map((value) => (
+          {[
+            ...bakingCategories.filter(
+              (value) => !categories.some((item) => item.value === value),
+            ),
+            "Recipes",
+            "Bakeries",
+          ].map((value) => (
             <button
               key={value}
               aria-pressed={category === value}
@@ -175,7 +230,7 @@ export function Explore() {
           ))}
         </div>
       )}
-      {matchingBakers.length > 0 && (
+      {matchingBakers.length > 0 && !bakerId && (
         <section
           className="explore-baker-results"
           aria-label="Bakers matching your search"
@@ -184,7 +239,7 @@ export function Explore() {
           <div>
             {matchingBakers.map((person) => (
               <Link key={person.id} href={profileHref(person.id)}>
-                <span className="avatar">{person.initials}</span>
+                <BakerAvatar id={person.id} />
                 <span>
                   <strong>{person.name}</strong>
                   <small>@{person.handle}</small>
@@ -199,12 +254,12 @@ export function Explore() {
           <div className="explore-section-title">
             <h2>
               {baker
-                ? `${baker.name}’s posts${category ? ` · ${category}` : ""}`
+                ? `${baker.name}’s contributions${category ? ` · ${category}` : ""}`
                 : category ||
                   (bakerId
-                    ? "Baker’s posts"
+                    ? "Baker’s contributions"
                     : query.trim()
-                      ? "Posts & recipes"
+                      ? "From the community"
                       : "Search results")}{" "}
               <span>({visible.length})</span>
             </h2>
@@ -222,13 +277,22 @@ export function Explore() {
                 <DiscoveryTile key={post.id} post={post} />
               ))}
             </div>
+          ) : outside.length ||
+            ownTries.length ||
+            (!bakerId && matchingBakers.length) ? (
+            <p className="explore-section-empty" role="status">
+              No community contributions match just yet.{" "}
+              {outside.length
+                ? "There’s something from the wider baking world below."
+                : "Try another craving, or clear the filters to browse."}
+            </p>
           ) : (
             <div className="discovery-empty" role="status">
               <Mascot />
               <h2>Not a crumb here just yet.</h2>
               <p>
-                Our demo has a small recipe box. Try pastries, cupcakes or
-                bread.
+                Our little collection is still growing. Try another craving or
+                browse all the discoveries.
               </p>
               <button
                 className="button"
@@ -257,11 +321,35 @@ export function Explore() {
                   <DiscoveryTile key={post.id} post={post} />
                 ))}
             </div>
+            <div className="explore-community-note">
+              <MessageCircle size={22} />
+              <div>
+                <p className="outside-label">A MOMENT FROM THE CLUB</p>
+                <Link href="/posts/kitchen-sunshine">
+                  <h3>A little sunshine on the kitchen counter.</h3>
+                  <p>{getPost("kitchen-sunshine")?.caption}</p>
+                </Link>
+                <Link
+                  className="explore-note-author"
+                  href={profileHref("noor")}
+                >
+                  From Noor’s kitchen <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
           </section>
+          <ExternalDiscoveries
+            items={externalDiscoveries.filter((item) => item.type !== "bakery")}
+          />
           <section className="explore-bakery">
             <div className="explore-section-title">
               <h2>A very good little find</h2>
-              <button onClick={() => select("Bakeries")}>See the story</button>
+              <Link
+                className="explore-find-all"
+                href="/explore?category=Bakeries"
+              >
+                More little finds <ArrowRight size={14} />
+              </Link>
             </div>
             <Link href="/posts/little-bakery" className="explore-bakery-card">
               <img
@@ -271,7 +359,7 @@ export function Explore() {
               />
               <span>
                 <small>
-                  <MapPin size={14} /> A NEIGHBOURHOOD FIND
+                  <MapPin size={14} /> A FIND FROM THE COMMUNITY
                 </small>
                 <h3>
                   The long way home,
@@ -285,11 +373,71 @@ export function Explore() {
                 <span className="small-text-link">Read James’s story</span>
               </span>
             </Link>
+            <a
+              href={externalFind.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="explore-external-find"
+            >
+              <span className="outside-label">CURATED · BEYOND THE CLUB</span>
+              <div>
+                <h3>{externalFind.title}</h3>
+                <p>{externalFind.description}</p>
+                <span>{externalFind.source} · Opens in a new tab</span>
+              </div>
+              <ArrowUpRight size={23} />
+            </a>
           </section>
         </>
       )}
+      {filtered && <ExternalDiscoveries items={outside} filtered />}
+      {filtered && ownTries.length > 0 && (
+        <section className="explore-your-tries">
+          <div className="explore-section-title">
+            <h2>From your kitchen</h2>
+            <span>Your recipe adventures</span>
+          </div>
+          {ownTries.map((entry) => (
+            <Link
+              key={entry.recipeId}
+              href={`/recipes/${entry.recipeId}#other-kitchens`}
+            >
+              <CheckCircle2 size={21} />
+              <span>
+                <strong>You tried {getRecipe(entry.recipeId)?.title}</strong>
+                <small>
+                  {entry.note || "A good thing from the shared recipe book."}
+                </small>
+              </span>
+              <ArrowRight size={17} />
+            </Link>
+          ))}
+        </section>
+      )}
+      {!filtered && selectedPeople.length > 0 && (
+        <section className="explore-meet">
+          <div>
+            <p className="outside-label">THERE’S A PERSON BEHIND EVERY BAKE</p>
+            <h2>Meet the club.</h2>
+            <p>A few people to share this little corner with.</p>
+          </div>
+          <div>
+            {selectedPeople.map((person) => (
+              <Link key={person.id} href={profileHref(person.id)}>
+                <BakerAvatar id={person.id} />
+                <span>
+                  <strong>{person.name}</strong>
+                  <small>{person.bio}</small>
+                </span>
+                <ArrowRight size={15} />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
       <p className="explore-demo-note">
-        A taste of the club · sample community content
+        Sample community contributions · external discoveries selected by Crumb
+        Club
       </p>
     </div>
   );

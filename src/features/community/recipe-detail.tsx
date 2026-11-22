@@ -20,7 +20,13 @@ import {
 } from "@/features/recipe-book/recipe-kitchens";
 import { Comments } from "./comments";
 
-export function RecipeDetail({ recipe }: { recipe: Recipe }) {
+export function RecipeDetail({
+  recipe,
+  weekId,
+}: {
+  recipe: Recipe;
+  weekId?: string;
+}) {
   const index = recipes.findIndex((item) => item.id === recipe.id);
   const previous = recipes[index - 1];
   const next = recipes[index + 1];
@@ -153,7 +159,11 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
           className="book-kitchens-rail"
           aria-label="Notes from bakers who tried this recipe"
         >
-          <RecipeKitchens key={recipe.id} recipeId={recipe.id} />
+          <RecipeKitchens
+            key={recipe.id}
+            recipeId={recipe.id}
+            weekId={weekId}
+          />
         </aside>
         <div className="book-table-talk book-recipe-discussion">
           <p className="book-edition">AROUND THE KITCHEN TABLE</p>

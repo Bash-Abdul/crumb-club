@@ -3681,39 +3681,6 @@
   display: inline-flex;
   align-items: center;
 }
-.follow-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  border: 1px solid var(--espresso);
-  border-radius: 5px;
-  background: var(--espresso);
-  color: var(--cream);
-  padding: 12px 19px;
-  font-size: 12px;
-  min-height: 44px;
-  white-space: nowrap;
-}
-.follow-button.is-following {
-  background: transparent;
-  color: var(--cocoa);
-  border-color: #c9a987;
-}
-.follow-button:hover:not(:disabled) {
-  background: var(--cocoa);
-  color: var(--cream);
-}
-.compact-follow {
-  font-size: 10px;
-  gap: 4px;
-  padding: 7px 8px;
-  min-height: 38px;
-  min-width: 88px;
-}
-.compact-follow svg {
-  width: 12px;
-}
 .profile-post-excerpt {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -3882,11 +3849,7 @@
 .popular-baker-row > a > span:last-child {
   min-width: 0;
 }
-.popular-baker-row .follow-button {
-  margin-top: 1px;
-  flex-shrink: 0;
-}
-.popular-baker-row small {
+.popular-baker-row .popular-baker-row small {
   font-size: 9px;
   line-height: 1.6;
 }

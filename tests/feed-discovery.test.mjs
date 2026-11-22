@@ -4,14 +4,17 @@ import {
   socialPosts,
   recipes,
   feedItems,
-  followedAuthorIds,
   resolveFeedItem,
   getPost,
 } from "../src/data/content.ts";
-import { selectHomeFeed } from "../src/features/community/feed-selection.ts";
+import {
+  selectHomeFeed,
+  arrangeHomeGrid,
+  readHomeFilter,
+} from "../src/features/community/feed-selection.ts";
 import { matchesCategory } from "../src/features/community/classification.ts";
 
-test("For you mixes all publishing types in chronological order", () => {
+test("All mixes all publishing types in chronological order", () => {
   const mixed = selectHomeFeed(feedItems, socialPosts, recipes);
   assert.equal(mixed.length, feedItems.length);
   const kinds = new Set(
@@ -30,25 +33,66 @@ test("For you mixes all publishing types in chronological order", () => {
   assert.equal(mixed[0].postId, "rainy-day");
 });
 
-test("Following uses only mock followed authors and has a real empty case", () => {
-  const following = selectHomeFeed(
+test("content filters separate bakes, recipes, finds and photo/text conversations", () => {
+  const expected = { bakes: 4, recipes: 3, finds: 1, conversations: 2 };
+  for (const [filter, count] of Object.entries(expected)) {
+    const visible = selectHomeFeed(feedItems, socialPosts, recipes, filter);
+    assert.equal(visible.length, count);
+    if (filter === "recipes")
+      assert.ok(visible.every((item) => item.kind === "recipe"));
+    else
+      assert.ok(
+        visible.every(
+          (item) =>
+            getPost(item.postId).kind ===
+            { bakes: "bake", finds: "discovery", conversations: "general" }[
+              filter
+            ],
+        ),
+      );
+  }
+  const conversations = selectHomeFeed(
     feedItems,
     socialPosts,
     recipes,
-    true,
-    followedAuthorIds,
+    "conversations",
   );
-  assert.ok(following.length > 0 && following.length < feedItems.length);
-  assert.ok(
-    following.every((item) =>
-      followedAuthorIds.includes(resolveFeedItem(item).author.id),
-    ),
+  assert.ok(conversations.some((item) => getPost(item.postId).images?.length));
+  assert.ok(conversations.some((item) => !getPost(item.postId).images?.length));
+});
+test("grid arrangements include every contribution exactly once", () => {
+  const selected = selectHomeFeed(feedItems, socialPosts, recipes);
+  const grid = arrangeHomeGrid(selected, socialPosts);
+  const arranged = [
+    grid.feature,
+    grid.find,
+    grid.conversation,
+    grid.recipe,
+    ...grid.rest,
+  ].filter(Boolean);
+  assert.equal(arranged.length, selected.length);
+  assert.equal(
+    new Set(arranged.map((item) => JSON.stringify(item))).size,
+    selected.length,
   );
-  assert.ok(following.some((item) => item.kind === "recipe"));
-  assert.deepEqual(
-    selectHomeFeed(feedItems, socialPosts, recipes, true, []),
-    [],
+  assert.equal(getPost(grid.feature.postId).kind, "bake");
+  assert.equal(getPost(grid.find.postId).kind, "discovery");
+});
+test("legacy following and unknown filters safely resolve to All", () => {
+  assert.equal(readHomeFilter("following"), "all");
+  assert.equal(readHomeFilter("unknown"), "all");
+  assert.equal(readHomeFilter(null), "all");
+  assert.equal(readHomeFilter("saved"), "saved");
+  const input = [
+    ...feedItems,
+    feedItems[0],
+    { kind: "post", postId: "missing" },
+  ];
+  assert.equal(
+    selectHomeFeed(input, socialPosts, recipes).length,
+    feedItems.length,
   );
+  assert.equal(input.length, feedItems.length + 2);
 });
 
 test("category discovery finds a bake and independent recipe without classifying general posts", () => {

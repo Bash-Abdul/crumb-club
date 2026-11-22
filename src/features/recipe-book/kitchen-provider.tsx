@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { activeWeekId, isWeeklyRecipe } from "@/data/weekly-bakes";
 import { recipes } from "@/data/content";
 import { CURRENT_BAKER_ID } from "@/data/bakers";
 import { sampleKitchenTries } from "@/data/kitchen-tries";
@@ -22,7 +23,12 @@ interface KitchenContext {
   local: LocalKitchenTries;
   ready: boolean;
   storageError: boolean;
-  saveTry: (recipeId: string, note: string, photo?: string) => boolean;
+  saveTry: (
+    recipeId: string,
+    note: string,
+    photo?: string,
+    weekId?: string,
+  ) => boolean;
   removeTry: (recipeId: string) => void;
 }
 const Context = createContext<KitchenContext | null>(null);
@@ -55,12 +61,25 @@ export function KitchenProvider({ children }: { children: ReactNode }) {
       setStorageError(true);
     }
   }, [local, ready]);
-  function saveTry(recipeId: string, note: string, photo?: string) {
+  function saveTry(
+    recipeId: string,
+    note: string,
+    photo?: string,
+    weekId?: string,
+  ) {
     if (!ready || !recipeIds.includes(recipeId)) return false;
     const clean = readKitchenTries(
       {
         [recipeId]: {
           note,
+          weekIds: [
+            ...new Set([
+              ...(local[recipeId]?.weekIds ?? []),
+              ...(weekId === activeWeekId && isWeeklyRecipe(weekId, recipeId)
+                ? [weekId]
+                : []),
+            ]),
+          ],
           ...(photo ? { photo } : {}),
           updatedAt: new Date().toISOString(),
         },
@@ -105,4 +124,16 @@ export function useKitchen(recipeId: string) {
       CURRENT_BAKER_ID,
     ),
   };
+}
+
+export function useBakerTries(bakerId: string) {
+  const context = useContext(Context);
+  const hydrated = useHydrated();
+  if (!context) throw new Error("KitchenProvider is required");
+  const local = hydrated ? context.local : {};
+  return recipeIds
+    .flatMap((recipeId) =>
+      recipeKitchenTries(recipeId, sampleKitchenTries, local, CURRENT_BAKER_ID),
+    )
+    .filter((entry) => entry.authorId === bakerId);
 }

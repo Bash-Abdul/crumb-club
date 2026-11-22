@@ -19,6 +19,7 @@ import {
 import { bakers, CURRENT_BAKER_ID, profileHref } from "@/data/bakers";
 import { BakerAvatar } from "@/features/profiles/baker-avatar";
 import { useBakers } from "@/features/profiles/bakers-provider";
+import { getBakeWeek } from "@/data/weekly-bakes";
 import { useKitchen } from "./kitchen-provider";
 import { KITCHEN_NOTE_LIMIT, type KitchenNote } from "./kitchen-tries";
 import { prepareKitchenPhoto } from "./prepare-kitchen-photo";
@@ -62,11 +63,13 @@ export function KitchenSummary({ recipeId }: { recipeId: string }) {
 function KitchenEditor({
   initial,
   recipeId,
+  weekId,
   onClose,
   onSaved,
 }: {
   initial?: KitchenNote;
   recipeId: string;
+  weekId?: string;
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -107,7 +110,7 @@ function KitchenEditor({
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (uploading) return;
-    if (!saveTry(recipeId, note, photo)) {
+    if (!saveTry(recipeId, note, photo, weekId)) {
       setError(
         "Your entry couldn’t be saved. Check the note and photograph, then try again.",
       );
@@ -210,9 +213,19 @@ function KitchenEditor({
   );
 }
 
-export function RecipeKitchens({ recipeId }: { recipeId: string }) {
+export function RecipeKitchens({
+  recipeId,
+  weekId,
+}: {
+  recipeId: string;
+  weekId?: string;
+}) {
+  const week = weekId ? getBakeWeek(weekId) : undefined;
   const { tries, own, ready, storageError, removeTry } = useKitchen(recipeId);
   const { currentBaker } = useBakers();
+  const visibleTries = weekId
+    ? tries.filter((entry) => entry.weekIds?.includes(weekId))
+    : tries;
   const [editing, setEditing] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [message, setMessage] = useState("");
@@ -234,13 +247,23 @@ export function RecipeKitchens({ recipeId }: { recipeId: string }) {
       className="recipe-kitchens"
       aria-labelledby="recipe-kitchens-title"
     >
+      {week && (
+        <div className="weekly-context">
+          <ChefHat size={20} />
+          <div>
+            <small>BAKING TOGETHER THIS WEEK</small>
+            <Link href={`/weekly/${week.id}`}>{week.title}</Link>
+            <p>Your try will also appear in this week’s kitchens.</p>
+          </div>
+        </div>
+      )}
       <header className="kitchen-section-heading">
         <div>
           <p className="book-edition">THE RECIPE, PASSED AROUND</p>
           <h2 id="recipe-kitchens-title">From other kitchens.</h2>
           <p>
-            {tries.length
-              ? `${tries.length} ${tries.length === 1 ? "baker has" : "bakers have"} given this a go. Here’s how it went.`
+            {visibleTries.length
+              ? `${visibleTries.length} ${visibleTries.length === 1 ? "baker has" : "bakers have"} given this a go. Here’s how it went.`
               : "A fresh page. Be the first to tell us how it went."}
           </p>
         </div>
@@ -254,7 +277,11 @@ export function RecipeKitchens({ recipeId }: { recipeId: string }) {
           onClick={editing ? close : edit}
         >
           {own ? <Pencil size={15} /> : <Plus size={16} />}
-          {own ? "Edit your try" : "I tried this"}
+          {weekId && own && !own.weekIds?.includes(weekId)
+            ? "Add your try to this week"
+            : own
+              ? "Edit your try"
+              : "I tried this"}
         </button>
       </header>
       {storageError && (
@@ -269,6 +296,7 @@ export function RecipeKitchens({ recipeId }: { recipeId: string }) {
       <div id="kitchen-entry-editor">
         {editing && (
           <KitchenEditor
+            weekId={weekId}
             initial={own}
             recipeId={recipeId}
             onClose={close}
@@ -284,7 +312,7 @@ export function RecipeKitchens({ recipeId }: { recipeId: string }) {
         )}
       </div>
       <div className="kitchen-entries">
-        {tries.map((entry) => {
+        {visibleTries.map((entry) => {
           const isOwn = entry.authorId === CURRENT_BAKER_ID;
           const author = isOwn
             ? currentBaker
@@ -318,6 +346,18 @@ export function RecipeKitchens({ recipeId }: { recipeId: string }) {
                   alt={`${author?.name ?? "A baker"}’s attempt at this recipe`}
                   loading="lazy"
                 />
+              )}
+              {entry.weekIds?.map(
+                (id) =>
+                  getBakeWeek(id) && (
+                    <Link
+                      key={id}
+                      className="weekly-entry-tag"
+                      href={`/weekly/${id}`}
+                    >
+                      Part of {getBakeWeek(id)?.title} <ArrowDown size={12} />
+                    </Link>
+                  ),
               )}
               <p className="kitchen-entry-note">
                 {entry.note ||

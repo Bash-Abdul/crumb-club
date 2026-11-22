@@ -1,18 +1,56 @@
 "use client";
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { Bookmark, ChefHat } from "lucide-react";
+import {
+  ArrowRight,
+  Bookmark,
+  BookOpen,
+  CheckCircle2,
+  Grid2X2,
+  MoreHorizontal,
+  Plus,
+} from "lucide-react";
 import { useDemo } from "./demo-provider";
 import { useCommunity } from "@/features/community/activity-provider";
-import { allContentPreviews as posts, contentHref } from "@/data/posts";
+import {
+  allContentPreviews as previews,
+  contentHref,
+  type CommunityPost,
+} from "@/data/posts";
 import { bakers, CURRENT_BAKER_ID, getPublishedItems } from "@/data/bakers";
-import { getPost, resolveFeedItem } from "@/data/content";
+import { getPost, getRecipe, resolveFeedItem } from "@/data/content";
 import { useBakers } from "@/features/profiles/bakers-provider";
 import { BakerAvatar } from "@/features/profiles/baker-avatar";
-import { FollowButton } from "@/features/profiles/follow-button";
+import { useBakerTries } from "@/features/recipe-book/kitchen-provider";
+import { ReplayTour } from "@/features/tour/replay-tour";
 import { ProfileMascot } from "@/features/mascots/profile-mascot";
 import { Mascot } from "@/features/mascots/mascot";
 import { ProfileEditor } from "@/features/profiles/profile-editor";
+type ProfileTab = "posts" | "recipes" | "tried" | "saved";
+function ContentList({ items }: { items: CommunityPost[] }) {
+  return (
+    <ul className="corner-content-list">
+      {items.map((item) => (
+        <li key={item.id}>
+          <Link href={contentHref(item)}>
+            {item.image ? (
+              <img src={item.image} alt="" loading="lazy" />
+            ) : (
+              <span className="corner-text-thumb">
+                <Grid2X2 size={24} />
+              </span>
+            )}
+            <span>
+              <strong>{item.title}</strong>
+              <small>{item.author}</small>
+            </span>
+            <ArrowRight size={17} />
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
 export function DemoProfile({
   bakerId = CURRENT_BAKER_ID,
 }: {
@@ -20,17 +58,37 @@ export function DemoProfile({
 }) {
   const { preferences } = useDemo();
   const { activity } = useCommunity();
-  const { currentBaker, ready, storageError, getCounts } = useBakers();
+  const { currentBaker, ready, storageError } = useBakers();
   const [editing, setEditing] = useState(false);
+  const [options, setOptions] = useState(false);
+  const [tab, setTab] = useState<ProfileTab>("posts");
   const [message, setMessage] = useState("");
   const editButton = useRef<HTMLButtonElement>(null);
   const own = bakerId === CURRENT_BAKER_ID;
   const baker = own
     ? currentBaker
     : bakers.find((person) => person.id === bakerId);
-  const saved = posts.filter((post) => activity[post.id]?.saved);
+  const saved = previews.filter((post) => activity[post.id]?.saved);
   const published = getPublishedItems(bakerId);
-  const counts = getCounts(bakerId);
+  const tries = useBakerTries(bakerId);
+  const recipeItems = published.filter((item) => item.kind === "recipe");
+  const postItems = published.filter((item) => item.kind === "post");
+  const bakesShared = postItems.filter(
+    (item) => getPost(item.postId)?.kind === "bake",
+  ).length;
+  const items =
+    tab === "saved"
+      ? saved
+      : tab === "tried"
+        ? tries.flatMap((entry) => {
+            const preview = previews.find((p) => p.id === entry.recipeId);
+            return preview ? [preview] : [];
+          })
+        : (tab === "recipes" ? recipeItems : postItems).flatMap((item) => {
+            const id = item.kind === "recipe" ? item.recipeId : item.postId;
+            const preview = previews.find((p) => p.id === id);
+            return preview ? [preview] : [];
+          });
   if (!ready)
     return (
       <p role="status" className="app-loading">
@@ -42,75 +100,96 @@ export function DemoProfile({
     ? (preferences?.interests ?? [])
     : [
         ...new Set(
-          published
-            .map((item) => {
-              const resource = resolveFeedItem(item);
-              return resource && "category" in resource
-                ? resource.category
-                : undefined;
-            })
-            .filter(
-              (category): category is NonNullable<typeof category> =>
-                !!category,
-            ),
+          published.flatMap((item) => {
+            const resource = resolveFeedItem(item);
+            return resource && "category" in resource && resource.category
+              ? [resource.category]
+              : [];
+          }),
         ),
       ];
   function closeEditor() {
     setEditing(false);
     requestAnimationFrame(() => editButton.current?.focus());
   }
+  const tabs = [
+    {
+      id: "posts" as const,
+      label: "Posts",
+      count: postItems.length,
+      Icon: Grid2X2,
+    },
+    {
+      id: "recipes" as const,
+      label: "Recipes",
+      count: recipeItems.length,
+      Icon: BookOpen,
+    },
+    {
+      id: "tried" as const,
+      label: "Tried",
+      count: tries.length,
+      Icon: CheckCircle2,
+    },
+    ...(own
+      ? [
+          {
+            id: "saved" as const,
+            label: "Saved",
+            count: saved.length,
+            Icon: Bookmark,
+          },
+        ]
+      : []),
+  ];
   return (
-    <div className="demo-profile-page">
-      <header className="profile-intro">
-        <BakerAvatar id={baker.id} className="profile-avatar" />
-        <p className="eyebrow">
-          {own
-            ? "YOUR LITTLE CORNER · DEMO PROFILE"
-            : "BAKER PROFILE · DEMO COMMUNITY"}
-        </p>
-        <h1>
-          {own && !preferences && baker.name === "Crumb friend"
-            ? "A place at the table."
-            : baker.name}
-        </h1>
-        <p className="profile-handle">@{baker.handle}</p>
-        {baker.bio && <p>{baker.bio}</p>}
-        <dl className="profile-counts">
-          <div>
-            <dt>Followers</dt>
-            <dd data-profile-followers>{counts.followers}</dd>
-          </div>
-          <div>
-            <dt>Following</dt>
-            <dd data-profile-following>{counts.following}</dd>
-          </div>
-          <div>
-            <dt>Published</dt>
-            <dd data-profile-published>{published.length}</dd>
-          </div>
-        </dl>
-        <div className="profile-header-actions">
-          {own ? (
-            <>
-              <button
-                className="button"
-                ref={editButton}
-                onClick={() => {
-                  setEditing(!editing);
-                  setMessage("");
-                }}
-                aria-expanded={editing}
-              >
-                Edit Profile
-              </button>
-              <Link className="profile-interests-link" href="/join">
-                {preferences ? "Edit your interests" : "Enter demo mode"}
-              </Link>
-            </>
-          ) : (
-            <FollowButton bakerId={baker.id} />
-          )}
+    <div className="profile-corner">
+      <div className="corner-cover">
+        <img
+          src="/images/buns-proofing.jpg"
+          alt="Cinnamon dough resting in a warm kitchen"
+          fetchPriority="high"
+        />
+      </div>
+      <header className="corner-intro">
+        <BakerAvatar id={baker.id} className="corner-avatar" />
+        <div className="corner-identity">
+          <h1>{baker.name}</h1>
+          <p className="corner-handle">@{baker.handle}</p>
+          <p>{baker.bio || "Baking, tasting, and a bit of both."}</p>
         </div>
+        {own && (
+          <div className="corner-actions">
+            <button
+              className="button"
+              ref={editButton}
+              aria-expanded={editing}
+              onClick={() => {
+                setEditing(!editing);
+                setMessage("");
+              }}
+            >
+              Edit Profile
+            </button>
+            <div className="corner-options">
+              <button
+                className="corner-more"
+                aria-label="Profile options"
+                aria-expanded={options}
+                aria-controls="corner-options"
+                onClick={() => setOptions(!options)}
+              >
+                <MoreHorizontal size={22} />
+              </button>
+              {options && (
+                <div id="corner-options">
+                  <ReplayTour />
+                  <Link href="/join">Edit interests & companion</Link>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </header>
       {own && editing && (
         <ProfileEditor
@@ -122,152 +201,159 @@ export function DemoProfile({
           }}
         />
       )}
-      {own && message && (
-        <p className="profile-feedback" role="status">
-          {storageError
-            ? "Profile updated for this visit. Browser storage is unavailable."
-            : message}
-        </p>
-      )}
+      {message && <p role="status">{message}</p>}
       {storageError && (
-        <p className="profile-storage-notice" role="status">
-          Changes will last for this visit. Your browser can’t save them right
-          now.
+        <p role="status">
+          Changes will last for this visit. Browser storage is unavailable.
         </p>
-      )}
-      {own && <ProfileMascot />}
-      {interests.length > 0 && (
-        <section className="profile-interests">
-          <h2>
-            {own ? "Your kind of good things" : "Their kind of good things"}
-          </h2>
-          <div>
-            {interests.map((interest) => (
-              <Link
-                key={interest}
-                href={`/explore?category=${encodeURIComponent(interest)}`}
-              >
-                {interest}
-              </Link>
-            ))}
-          </div>
-        </section>
       )}
       <section
-        className="profile-saved profile-published"
-        aria-labelledby="published-heading"
+        className="corner-summary"
+        aria-label="Contributions and companion"
       >
-        <div className="explore-section-title">
-          <h2 id="published-heading">Shared with the club</h2>
-          <ChefHat size={19} />
-        </div>
-        {published.length ? (
-          <ul>
-            {published.map((item) => {
-              const id = item.kind === "post" ? item.postId : item.recipeId;
-              const preview = posts.find((post) => post.id === id);
-              if (!preview) return null;
-              const kind =
-                item.kind === "recipe"
-                  ? "Recipe"
-                  : getPost(id)?.kind === "general"
-                    ? "Post"
-                    : getPost(id)?.kind === "bake"
-                      ? "Bake"
-                      : "Little find";
-              return (
-                <li key={`${item.kind}-${id}`}>
-                  <Link href={contentHref(preview)}>
-                    {preview.image ? (
-                      <img src={preview.image} alt="" />
-                    ) : (
-                      <span className="saved-text-thumbnail" aria-hidden="true">
-                        {preview.initials}
-                      </span>
-                    )}
-                    <span>
-                      <strong>{preview.title}</strong>
-                      <small>
-                        {kind} · {resolveFeedItem(item)?.time}
-                      </small>
-                      <span className="profile-post-excerpt">
-                        {preview.story}
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className="profile-empty">
-            <Mascot />
-            <p>
-              {own
-                ? "Your first little story is still to come."
-                : "Nothing shared just yet."}
-            </p>
-            {own && (
-              <Link className="small-text-link" href="/create?type=post">
-                Start a demo draft
-              </Link>
-            )}
+        <dl className="corner-counts">
+          <div>
+            <dt>Recipes shared</dt>
+            <dd>{recipeItems.length}</dd>
           </div>
-        )}
+          <div>
+            <dt>Bakes shared</dt>
+            <dd>{bakesShared}</dd>
+          </div>
+          <div>
+            <dt>Recipes tried</dt>
+            <dd>{tries.length}</dd>
+          </div>
+        </dl>
+        {own && <ProfileMascot />}
       </section>
-      {own && (
+      <section className="corner-interests">
+        <h2>{own ? "Your" : "Their"} kind of good things</h2>
+        <div>
+          {interests.map((interest) => (
+            <Link
+              key={interest}
+              href={`/explore?category=${encodeURIComponent(interest)}`}
+            >
+              {interest}
+            </Link>
+          ))}
+          {own && (
+            <Link className="corner-edit-interests" href="/join">
+              <Plus size={16} />{" "}
+              {interests.length ? "Edit interests" : "Choose your interests"}
+            </Link>
+          )}
+        </div>
+      </section>
+      <nav className="corner-tabs" aria-label="Profile content">
+        {tabs.map(({ id, label, count, Icon }) => (
+          <button
+            key={id}
+            aria-current={tab === id ? "page" : undefined}
+            onClick={() => setTab(id)}
+            aria-controls="corner-content"
+          >
+            <Icon size={19} />
+            {label} ({count})
+          </button>
+        ))}
+      </nav>
+      <div className={`corner-columns${own ? "" : " corner-columns--public"}`}>
         <section
-          className="profile-saved"
-          aria-labelledby="private-saved-heading"
+          id="corner-content"
+          aria-label={`${tabs.find((item) => item.id === tab)?.label} by ${baker.name}`}
         >
-          <div className="explore-section-title">
-            <h2 id="private-saved-heading">Tucked away for later</h2>
-            <Bookmark size={19} />
-          </div>
-          <p className="private-saved-note">
-            Only you can see your saved content.{" "}
-            <Link href="/app?feed=saved">Open Saved</Link>
-          </p>
-          {saved.length ? (
-            <ul>
-              {saved.map((post) => (
-                <li key={post.id}>
-                  <Link href={contentHref(post)}>
-                    {post.image ? (
-                      <img src={post.image} alt="" />
-                    ) : (
-                      <span className="saved-text-thumbnail" aria-hidden="true">
-                        {post.initials}
-                      </span>
-                    )}
-                    <span>
-                      <strong>{post.title}</strong>
-                      <small>{post.author}</small>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {items.length ? (
+            <ContentList items={items} />
           ) : (
-            <div className="profile-empty">
+            <div className="corner-empty">
               <Mascot />
+              <h2>
+                {tab === "posts"
+                  ? own
+                    ? "Your first little story is still to come."
+                    : "A little story is still to come."
+                  : tab === "recipes"
+                    ? "A fresh page, waiting for a recipe."
+                    : tab === "tried"
+                      ? "Every recipe starts with a first try."
+                      : "Keep a little for later."}
+              </h2>
               <p>
-                Your next favourite is out there.
-                <br />
-                Save a post and it’ll be waiting here.
+                {tab === "posts"
+                  ? "Share a bake, a find, a kitchen moment, or anything else you’d like to add to the club."
+                  : tab === "saved"
+                    ? "Save a recipe or a story you love. You’ll find it here."
+                    : "Find a little inspiration in the club’s shared recipe book."}
               </p>
-              <Link href="/explore" className="small-text-link">
-                Find a little inspiration
-              </Link>
+              {own && (
+                <Link
+                  className="button"
+                  href={
+                    tab === "posts"
+                      ? "/create?type=post"
+                      : tab === "recipes"
+                        ? "/create?type=recipe"
+                        : "/recipes"
+                  }
+                >
+                  <Plus size={18} />
+                  {tab === "posts"
+                    ? "Create a post"
+                    : tab === "recipes"
+                      ? "Share a recipe"
+                      : "Open the recipe book"}
+                </Link>
+              )}
             </div>
           )}
         </section>
-      )}
-      <p className="profile-scope">
-        {own
-          ? "Your profile and follows are saved on this device. Public publishing, collections and a baking journal are still to come."
-          : "Sample community profile · follow changes stay in this browser."}
-      </p>
+        {own && (
+          <aside className="corner-aside">
+            <section>
+              <div className="corner-section-heading">
+                <h2>Recently saved</h2>
+                <button onClick={() => setTab("saved")}>
+                  View all <ArrowRight size={16} />
+                </button>
+              </div>
+              {saved.length ? (
+                <ContentList items={saved.slice(0, 2)} />
+              ) : (
+                <p className="corner-quiet">
+                  A place for the good things you want to come back to.{" "}
+                  <Link href="/explore">Find something lovely.</Link>
+                </p>
+              )}
+            </section>
+            <section>
+              <h2>Recent activity</h2>
+              {tries.length ? (
+                <ul className="corner-activity">
+                  {[...tries]
+                    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+                    .slice(0, 3)
+                    .map((entry) => (
+                      <li key={entry.recipeId}>
+                        <CheckCircle2 size={19} />
+                        <Link href={`/recipes/${entry.recipeId}`}>
+                          Tried{" "}
+                          <strong>{getRecipe(entry.recipeId)?.title}</strong>
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+              ) : (
+                <p className="corner-quiet">
+                  Your recipe adventures will appear here. A first attempt
+                  counts, too.
+                </p>
+              )}
+            </section>
+          </aside>
+        )}
+      </div>
     </div>
   );
 }

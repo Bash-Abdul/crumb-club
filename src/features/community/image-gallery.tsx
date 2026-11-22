@@ -31,8 +31,13 @@ export function ImageGallery({
   useEffect(() => {
     const element = track.current;
     if (!element) return;
+    let lastWidth = element.clientWidth;
     const observer = new ResizeObserver(() => {
-      if (!element.clientWidth) return;
+      const width = element.clientWidth;
+      // The initial notification and height-only changes must not cancel a
+      // navigation that has already started during hydration or image loading.
+      if (!width || width === lastWidth) return;
+      lastWidth = width;
       element.scrollTo({
         left: current.current * element.clientWidth,
         behavior: "instant",

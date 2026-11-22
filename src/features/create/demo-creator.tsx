@@ -12,8 +12,10 @@ import {
   Check,
   ChevronLeft,
 } from "lucide-react";
+import { activeWeekId, getBakeWeek } from "@/data/weekly-bakes";
 type Kind = "post" | "bake" | "find" | "recipe";
 interface Draft {
+  weekId?: string;
   kind: Kind;
   title: string;
   story: string;
@@ -35,6 +37,12 @@ export function DemoCreator() {
     (mode) => mode.kind === params.get("type"),
   )?.kind;
   const initial = requested ?? "post";
+  const requestedWeek = getBakeWeek(params.get("week") ?? "");
+  const weeklyTheme =
+    requestedWeek?.id === activeWeekId && requestedWeek.format === "theme"
+      ? requestedWeek
+      : undefined;
+
   const [draft, setDraft] = useState<Draft>({
     kind: initial,
     title: "",
@@ -79,7 +87,12 @@ export function DemoCreator() {
             (!item.photo ||
               /^data:image\/(jpeg|png|webp);base64,/.test(item.photo))
           )
-            if (!requested || requested === item.kind) setDraft(item);
+            if (!requested || requested === item.kind)
+              setDraft({
+                ...item,
+                weekId:
+                  typeof item.weekId === "string" ? item.weekId : undefined,
+              });
             else
               setDraft({
                 kind: requested,
@@ -99,6 +112,12 @@ export function DemoCreator() {
     }
     setReady(true);
   }, [requested]);
+  const attachedWeek =
+    weeklyTheme ??
+    (draft.weekId === activeWeekId &&
+    getBakeWeek(draft.weekId)?.format === "theme"
+      ? getBakeWeek(draft.weekId)
+      : undefined);
   const canSave =
     draft.kind === "recipe"
       ? !!(
@@ -144,6 +163,7 @@ export function DemoCreator() {
         KEY,
         JSON.stringify({
           ...draft,
+          weekId: draft.kind === "bake" ? attachedWeek?.id : undefined,
           title: draft.kind === "post" ? "" : draft.title.trim(),
           story: draft.story.trim(),
         }),
@@ -171,6 +191,18 @@ export function DemoCreator() {
           <p>A proud moment. A happy accident. All welcome.</p>
         </div>
       </header>
+      {attachedWeek && draft.kind === "bake" && (
+        <div className="weekly-context">
+          <ChefHat size={21} />
+          <div>
+            <small>PART OF THIS WEEK’S BAKE</small>
+            <Link href={`/weekly/${attachedWeek.id}`}>
+              {attachedWeek.title} <ChevronLeft size={14} />
+            </Link>
+            <p>Your own take on the theme. A photo, a little story, and you.</p>
+          </div>
+        </div>
+      )}
       <p className="creator-demo">
         Demo draft · saved on this device, never published
       </p>
@@ -185,7 +217,11 @@ export function DemoCreator() {
             saved in this browser. You can return to Create to keep working on
             it.
           </p>
-          <p>Posting to the community is coming in a later milestone.</p>
+          <p>
+            {attachedWeek && draft.kind === "bake"
+              ? `The “${attachedWeek.title}” week is attached to this draft. It hasn’t been added to the weekly kitchens yet.`
+              : "Posting to the community is coming in a later milestone."}
+          </p>
           <button className="button" onClick={() => setSaved(false)}>
             Keep editing
           </button>

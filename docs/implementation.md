@@ -1,6 +1,8 @@
 # Crumb Club implementation status
 
-Updated 20 November 2026.
+Updated 22 November 2026.
+
+For current Home, profiles and onboarding behavior, see [Community grid and tour](community-grid-and-tour.md). The milestone descriptions below document earlier iterations; following, its counts and its feed have since been removed.
 
 Crumb Club is a responsive frontend prototype for a baking and baked-goods community. It includes the public landing page, a redesigned community application, optional demo onboarding, visual discovery, individual stories and recipes, and a local draft editor.
 
